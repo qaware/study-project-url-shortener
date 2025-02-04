@@ -4,7 +4,7 @@ import { UrlShortenerService } from './url-shortener.service';
 @Component({
   selector: 'app-root',
   template: `
-    <div style="text-align:center">
+    <!-- <div style="text-align:center">
       <h1>URL Shortener</h1>
       <input type="text" [(ngModel)]="url" placeholder="Enter URL" />
       <button (click)="shorten()">Shorten URL</button>
@@ -17,7 +17,7 @@ import { UrlShortenerService } from './url-shortener.service';
       <div *ngIf="errorMessage" style="color:red;">
         {{ errorMessage }}
       </div>
-    </div>
+    </div> -->
   `,
   styleUrls: ['./app.component.css'],
 })

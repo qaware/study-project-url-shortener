@@ -3,12 +3,12 @@ version: '3'
 tasks:
   build-backend:
     cmds:
-      - docker build -t url-shortener-backend ./src/backend
+      - docker build -t url-shortener-backend -f ./src/backend/Dockerfile .
     desc: Build the backend Docker image
 
   build-frontend:
     cmds:
-      - docker build -t url-shortener-frontend ./src/frontend
+      - docker build -t url-shortener-frontend -f src/frontend/Dockerfile .
     desc: Build the frontend Docker image
 
   run-backend:
@@ -30,13 +30,6 @@ tasks:
     cmds:
       - ng serve
     desc: Run the frontend container for testing
-  stop:
-    cmds:
-      - docker stop backend || true
-      - docker stop frontend || true
-      - docker rm backend || true
-      - docker rm frontend || true
-    desc: Stop and remove running containers
 
   run-dev:
     deps: [stop, build-backend, build-frontend, run-backend-dev, run-frontend-dev]
@@ -45,3 +38,18 @@ tasks:
   run:
     deps: [stop, build-backend, build-frontend, run-backend, run-frontend]
     desc: Build and run both backend and frontend
+
+  stop:
+    cmds:
+      - docker stop $(docker ps -q)
+    desc: Stop running containers gracefully
+
+  kill:
+    cmds:
+      - docker kill $(docker ps -q)
+    desc: Kill running containers
+
+  stats: 
+    cmds:
+      - docker stats
+    desc: Show container stats
