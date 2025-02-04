@@ -3,6 +3,7 @@ import { UrlShortenerService } from './url-shortener.service';
 
 @Component({
   selector: 'app-root',
+  standalone: true,
   template: `
     <!-- <div style="text-align:center">
       <h1>URL Shortener</h1>

@@ -1,4 +1,9 @@
-version: '3'
+version: "3"
+
+includes:
+  tests:
+    taskfile: ./Requests.yml
+    flatten: true
 
 tasks:
   build-backend:
@@ -18,7 +23,7 @@ tasks:
 
   run-backend-dev:
     cmds:
-      - uvicorn main:app --host 0.0.0.0 --port 8000
+      - cd src/backend && python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt && uvicorn main:app --reload --host 0.0.0.0 --port 8000
     desc: Run the backend container for testing
 
   run-frontend:
@@ -28,11 +33,12 @@ tasks:
 
   run-frontend-dev:
     cmds:
-      - ng serve
+      - cd src/frontend && npm run ng serve
     desc: Run the frontend container for testing
 
   run-dev:
-    deps: [stop, build-backend, build-frontend, run-backend-dev, run-frontend-dev]
+    deps:
+      [stop, build-backend, build-frontend, run-backend-dev, run-frontend-dev]
     desc: Build and run both backend and frontend
 
   run:
@@ -41,15 +47,15 @@ tasks:
 
   stop:
     cmds:
-      - docker stop $(docker ps -q)
+      - docker stop $(docker ps -q) || true
     desc: Stop running containers gracefully
 
   kill:
     cmds:
-      - docker kill $(docker ps -q)
+      - docker kill $(docker ps -q) || true
     desc: Kill running containers
 
-  stats: 
+  stats:
     cmds:
       - docker stats
     desc: Show container stats

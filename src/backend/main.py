@@ -16,6 +16,7 @@ def generate_short_code(length: int = 6) -> str:
 
 @app.post("/shorten")
 def shorten_url(request: UrlRequest):
+    # TODO: do not shorten if already contained
     short_code = generate_short_code()
     while short_code in url_store:
         short_code = generate_short_code()

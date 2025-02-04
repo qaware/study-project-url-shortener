@@ -1,0 +1,16 @@
+# This file contains curl requests for testing purposes
+version: "3"
+
+tasks:
+  execute-shorten-local:
+    cmds:
+      - |
+        curl -vX POST http://localhost:8000/shorten \
+          -H "Content-Type: application/json" \
+          -d '{"url": "https://example.com/your-long-url"}'
+    desc: Call the shorten endpoint locally
+
+  execute-get-long-url-local:
+    cmds:
+      - curl -vX GET http://localhost:8000/AotyTC
+    desc: Call the get long URL endpoint locally

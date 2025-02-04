@@ -1,3 +1,13 @@
+
+TODO: include information in readme:
+
+# Requirements
+
+- node version 22
+  
+
+---- Previous version
+
 # UrlShortener
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.1.5.
