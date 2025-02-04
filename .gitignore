@@ -5,7 +5,7 @@
 **/__pycache__
 
 # Compiled output
-/dist
+**/dist
 /tmp
 /out-tsc
 /bazel-out

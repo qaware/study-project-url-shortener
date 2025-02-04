@@ -17,21 +17,35 @@ tasks:
     desc: Build the frontend Docker image
 
   run-backend:
+    deps:
+      - stop
+      - build-backend
     cmds:
       - docker run -d -p 8000:8000 --name backend url-shortener-backend
     desc: Run the backend container
 
-  run-backend-dev:
-    cmds:
-      - cd src/backend && python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt && uvicorn main:app --reload --host 0.0.0.0 --port 8000
-    desc: Run the backend container for testing
-
   run-frontend:
+    deps:
+      - stop
+      - build-frontend
     cmds:
       - docker run -d -p 80:80 --name frontend url-shortener-frontend
     desc: Run the frontend container
 
+  run:
+    deps: [stop, build-backend, build-frontend, run-backend, run-frontend]
+    desc: Build and run both backend and frontend
+
+  run-backend-dev:
+    deps:
+      - stop
+    cmds:
+      - cd src/backend && python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt && uvicorn main:app --reload --host 0.0.0.0 --port 8000
+    desc: Run the backend container for testing
+
   run-frontend-dev:
+    deps:
+      - stop
     cmds:
       - cd src/frontend && npm run ng serve
     desc: Run the frontend container for testing
@@ -41,21 +55,29 @@ tasks:
       [stop, build-backend, build-frontend, run-backend-dev, run-frontend-dev]
     desc: Build and run both backend and frontend
 
-  run:
-    deps: [stop, build-backend, build-frontend, run-backend, run-frontend]
-    desc: Build and run both backend and frontend
-
   stop:
     cmds:
-      - docker stop $(docker ps -q) || true
+      - docker stop $(docker ps -aq) || true
+      - docker rm $(docker ps -aq) || true
     desc: Stop running containers gracefully
 
   kill:
     cmds:
-      - docker kill $(docker ps -q) || true
+      - docker kill $(docker ps -aq) || true
+      - docker rm $(docker ps -aq) || true
     desc: Kill running containers
 
+  logs-frontend:
+    cmds:
+      - docker logs frontend
+    desc: Show frontend logs
+
+  logs-backend:
+    cmds:
+      - docker logs backend
+    desc: Show backend logs
+    
   stats:
     cmds:
-      - docker stats
+      - docker stats -a
     desc: Show container stats

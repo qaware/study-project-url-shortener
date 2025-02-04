@@ -6,12 +6,12 @@ WORKDIR /app
 COPY src/frontend/package*.json ./
 RUN npm install
 
-COPY src/frontend ./
-RUN npm run build --prod
+COPY src/frontend/ ./
+RUN npm run build
 
 # Stage 2: Serve the app with Nginx
 FROM nginx:alpine
-COPY --from=builder /app/dist/url-shortener /usr/share/nginx/html
+COPY --from=builder /app/dist/url-shortener/browser /usr/share/nginx/html
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
