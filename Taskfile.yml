@@ -1,0 +1,47 @@
+version: '3'
+
+tasks:
+  build-backend:
+    cmds:
+      - docker build -t url-shortener-backend ./src/backend
+    desc: Build the backend Docker image
+
+  build-frontend:
+    cmds:
+      - docker build -t url-shortener-frontend ./src/frontend
+    desc: Build the frontend Docker image
+
+  run-backend:
+    cmds:
+      - docker run -d -p 8000:8000 --name backend url-shortener-backend
+    desc: Run the backend container
+
+  run-backend-dev:
+    cmds:
+      - uvicorn main:app --host 0.0.0.0 --port 8000
+    desc: Run the backend container for testing
+
+  run-frontend:
+    cmds:
+      - docker run -d -p 80:80 --name frontend url-shortener-frontend
+    desc: Run the frontend container
+
+  run-frontend-dev:
+    cmds:
+      - ng serve
+    desc: Run the frontend container for testing
+  stop:
+    cmds:
+      - docker stop backend || true
+      - docker stop frontend || true
+      - docker rm backend || true
+      - docker rm frontend || true
+    desc: Stop and remove running containers
+
+  run-dev:
+    deps: [stop, build-backend, build-frontend, run-backend-dev, run-frontend-dev]
+    desc: Build and run both backend and frontend
+
+  run:
+    deps: [stop, build-backend, build-frontend, run-backend, run-frontend]
+    desc: Build and run both backend and frontend
