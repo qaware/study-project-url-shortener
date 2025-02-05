@@ -7,6 +7,7 @@ import { UrlShortenerService } from '../../url-shortener.service';
   selector: 'app-redirect',
   standalone: true,
   template: `
+  <!-- TODO: make nice to watch -->
     @if(errorMessage()) {
     <p>{{ errorMessage() }}</p>
     <a routerLink="/">Go Home</a>
@@ -21,21 +22,28 @@ export class RedirectComponent implements OnInit {
   private readonly urlShortenerService = inject(UrlShortenerService);
   private readonly logger = inject(NGXLogger);
 
+  // TODO: no re-routing is done here right now
   async ngOnInit(): Promise<void> {
-    this.logger.debug('Redirecting...');
-    this.route.paramMap.subscribe(async (params) => {
-      const shortCode = params.get('shortcode');
+    this.logger.info('Redirecting to long URL...');
+    this.route.params.subscribe((params) => {
+      this.logger.debug('Route params:', params);
+      const shortCode = params['shortcode'];
       if (!shortCode) {
         this.errorMessage.set('Invalid short URL');
         return;
       }
-      try {
-        const result = await this.urlShortenerService.getLongUrl(shortCode);
-        window.location.href = result.long_url;
-      } catch (error) {
-        this.logger.error('Failed to fetch long URL:', error);
-        this.errorMessage.set('Short URL not found.');
-      }
+      this.handleShortCode(shortCode);
     });
+  }
+
+  private async handleShortCode(shortCode: string): Promise<void> {
+    try {
+      const result = await this.urlShortenerService.getLongUrl(shortCode);
+      this.logger.debug('Long URL retrieved:', result.long_url);
+      window.location.href = result.long_url;
+    } catch (error) {
+      this.logger.error('Failed to fetch long URL:', error);
+      this.errorMessage.set('Short URL not found.');
+    }
   }
 }

@@ -1,8 +1,8 @@
 import { Routes } from '@angular/router';
-import { AppComponent } from './app.component';
 import { RedirectComponent } from './components/redirect/redirect.component';
+import { UrlShortenerComponent } from './components/url-shortener/url-shortener.component';
 
 export const routes: Routes = [
-    { path: '', component: AppComponent },
-    { path: ':shortcode', component: RedirectComponent },
+    { path: '', component: UrlShortenerComponent },
+    { path: '**', component: RedirectComponent },
 ];
