@@ -39,18 +39,13 @@ tasks:
   # TODO: does run-backend-dev and run-frontend-dev see each other?
   run-backend-dev:
     cmds:
-      - cd src/backend && python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt && uvicorn main:app --reload --host 0.0.0.0 --port 8000
+      - cd src/backend && python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt && uvicorn main:app --reload --port 8000
     desc: Run the backend container for testing
 
   run-frontend-dev:
     cmds:
-      - cd src/frontend && npm run ng -- serve --host 0.0.0.0
+      - cd src/frontend && npm run start
     desc: Run the frontend container for testing
-
-  run-dev:
-    deps:
-      [stop, build-backend, build-frontend, run-backend-dev, run-frontend-dev]
-    desc: Build and run both backend and frontend
 
   create-docker-network:
     cmds:
