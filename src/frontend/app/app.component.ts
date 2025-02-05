@@ -28,7 +28,6 @@ import { StatusComponent } from './components/request-status.component';
     <h1>URL Shortener</h1>
 
     <mat-form-field appearance="outline">
-      <!-- TODO: text ist zu blass -->
       <input matInput input [(ngModel)]="url" placeholder="Enter URL" />
       <mat-label>URL</mat-label>
     </mat-form-field>

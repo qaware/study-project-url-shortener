@@ -12,6 +12,7 @@ RUN npm run build
 # Stage 2: Serve the app with Nginx
 FROM nginx:alpine
 COPY --from=builder /app/dist/url-shortener/browser /usr/share/nginx/html
+COPY src/frontend/nginx/default.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

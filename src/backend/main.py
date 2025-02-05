@@ -1,7 +1,8 @@
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel
 import random
 import string
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
@@ -9,7 +10,7 @@ app = FastAPI()
 url_store = {}
 
 class UrlRequest(BaseModel):
-    url: HttpUrl
+    url: str
 
 def generate_short_code(length: int = 6) -> str:
     return ''.join(random.choices(string.ascii_letters + string.digits, k=length))

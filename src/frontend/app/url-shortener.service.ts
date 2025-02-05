@@ -14,7 +14,7 @@ interface ShortenResponse {
 export class UrlShortenerService {
   private readonly http = inject(HttpClient);
   private readonly logger = inject(NGXLogger);
-  private readonly backendUrl = 'http://localhost:8000';
+  private readonly backendBasePath = '/api';
 
   /**
    * Sends a POST request to shorten the provided URL.
@@ -23,7 +23,7 @@ export class UrlShortenerService {
    * @returns A promise that resolves to the shortened URL response.
    */
   public async shortenUrl(url: string): Promise<ShortenResponse> {
-    const apiUrl = `${this.backendUrl}/shorten`;
+    const apiUrl = `${this.backendBasePath}/shorten`;
 
     // Log the outgoing request with payload details.
     this.logger.info(`Sending POST request to ${apiUrl} with payload:`, { url });

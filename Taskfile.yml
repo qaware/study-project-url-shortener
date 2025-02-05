@@ -18,24 +18,25 @@ tasks:
 
   run-backend:
     deps:
-      - stop
+      - create-docker-network
       - build-backend
     cmds:
-      - docker run -d -p 8000:8000 --name backend url-shortener-backend
+      - docker run -d --network url-shortener-net -p 8000:8000 --name backend url-shortener-backend
     desc: Run the backend container
 
   run-frontend:
     deps:
-      - stop
+      - create-docker-network
       - build-frontend
     cmds:
-      - docker run -d -p 80:80 --name frontend url-shortener-frontend
+      - docker run -d --network url-shortener-net -p 80:80 --name frontend url-shortener-frontend
     desc: Run the frontend container
 
   run:
     deps: [stop, build-backend, build-frontend, run-backend, run-frontend]
     desc: Build and run both backend and frontend
 
+  # TODO: does run-backend-dev and run-frontend-dev see each other?
   run-backend-dev:
     cmds:
       - cd src/backend && python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt && uvicorn main:app --reload --host 0.0.0.0 --port 8000
@@ -51,6 +52,11 @@ tasks:
       [stop, build-backend, build-frontend, run-backend-dev, run-frontend-dev]
     desc: Build and run both backend and frontend
 
+  create-docker-network:
+    cmds:
+      - docker network create url-shortener-net || true
+    desc: Create a Docker network
+
   stop:
     cmds:
       - docker stop $(docker ps -aq) || true
@@ -62,6 +68,10 @@ tasks:
       - docker kill $(docker ps -aq) || true
       - docker rm $(docker ps -aq) || true
     desc: Kill running containers
+
+  restart: 
+    deps: [stop, run, stats]
+    desc: Restarts all containers
 
   logs-frontend:
     cmds:
