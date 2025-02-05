@@ -8,10 +8,13 @@ import {
   provideZoneChangeDetection,
 } from '@angular/core';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { provideRouter } from '@angular/router';
 import { LoggerModule, NgxLoggerLevel } from 'ngx-logger';
+import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideRouter(routes),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideHttpClient(withInterceptorsFromDi()),
     provideAnimationsAsync(),

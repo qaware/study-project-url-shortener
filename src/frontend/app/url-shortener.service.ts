@@ -26,7 +26,9 @@ export class UrlShortenerService {
     const apiUrl = `${this.backendBasePath}/shorten`;
 
     // Log the outgoing request with payload details.
-    this.logger.info(`Sending POST request to ${apiUrl} with payload:`, { url });
+    this.logger.info(`Sending POST request to ${apiUrl} with payload:`, {
+      url,
+    });
 
     try {
       // Await the response from the HTTP POST request.
@@ -46,6 +48,16 @@ export class UrlShortenerService {
         this.logger.error('An unexpected error occurred', error);
       }
       // Re-throw the error to let the caller handle it.
+      throw error;
+    }
+  }
+
+  public async getLongUrl(shortCode: string): Promise<{ long_url: string }> {
+    const apiUrl = `${this.backendBasePath}/${shortCode}`;
+    try {
+      return await firstValueFrom(this.http.get<{ long_url: string }>(apiUrl));
+    } catch (error: unknown) {
+      this.logger.error('Error fetching long URL for short code:', error);
       throw error;
     }
   }

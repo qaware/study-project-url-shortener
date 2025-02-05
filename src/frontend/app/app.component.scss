@@ -4,6 +4,15 @@
     align-items: center;
 }
 
-app-request-status {
-  padding-top: 10px;
+app-status {
+  margin-bottom: 30px;
+}
+
+.short-path-result {
+  background-color: rgba(0, 128, 0, 0.2);
+  color: green;
+  padding: 10px;
+  border-radius: 4px;
+  margin-top: 10px;
+  margin-bottom: 30px;
 }

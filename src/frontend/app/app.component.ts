@@ -7,9 +7,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { NGXLogger } from 'ngx-logger';
-import { ShortenStatus } from './model/request-status.model';
+import { ShortenStatus } from './model/status.model';
 import { UrlShortenerService } from './url-shortener.service';
-import { StatusComponent } from './components/request-status.component';
+import { StatusComponent } from './components/status/status.component';
 
 @Component({
   selector: 'app-root',
@@ -31,19 +31,28 @@ import { StatusComponent } from './components/request-status.component';
       <input matInput input [(ngModel)]="url" placeholder="Enter URL" />
       <mat-label>URL</mat-label>
     </mat-form-field>
+
+    <!-- Display shortend path -->
+    @if (shortPath()) {
+    <p class="short-path-result">
+      Short Path: <a href="{{ shortPath() }}">{{ shortPath() }}</a>
+    </p>
+    } @else if (status()){
+      <app-status [status]="status()" />
+    }
+
     <button mat-raised-button (click)="shorten()" color="primary">
       @if(shorteningUrlInProgress()) {
       <mat-progress-spinner mode="indeterminate" diameter="20" />
       } @else { Shorten! }
     </button>
 
-    <app-status [status]="status()" />
   `,
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
   protected readonly url = signal<string | undefined>(undefined);
-  protected readonly shortCode = signal<string | undefined>(undefined);
+  protected readonly shortPath = signal<string | undefined>(undefined);
   protected readonly errorMessage = signal<string | undefined>(undefined);
   protected readonly shorteningUrlInProgress = signal(false);
   protected readonly status = signal<ShortenStatus | undefined>(undefined);
@@ -60,6 +69,8 @@ export class AppComponent {
   private readonly urlShortenerService = inject(UrlShortenerService);
 
   protected async shorten() {
+    this.shortPath.set(undefined);
+
     if (this.shorteningUrlInProgress()) {
       this.logger.info(
         'Shortening URL is already in progress. Not starting another request.'
@@ -76,10 +87,8 @@ export class AppComponent {
 
     this.shorteningUrlInProgress.set(true);
     try {
-      await this.urlShortenerService.shortenUrl(url);
-      setTimeout(() => {
-        this.shortCode.set('Shortened URL code');
-      }, 1000);
+      const response = await this.urlShortenerService.shortenUrl(url);
+      this.shortPath.set(response.short_code);
       this.url.set(undefined);
       this.status.set(ShortenStatus.REQUEST_SUCCESS);
     } catch (error) {
