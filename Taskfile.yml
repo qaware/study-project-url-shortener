@@ -37,15 +37,11 @@ tasks:
     desc: Build and run both backend and frontend
 
   run-backend-dev:
-    deps:
-      - stop
     cmds:
       - cd src/backend && python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt && uvicorn main:app --reload --host 0.0.0.0 --port 8000
     desc: Run the backend container for testing
 
   run-frontend-dev:
-    deps:
-      - stop
     cmds:
       - cd src/frontend && npm run ng serve
     desc: Run the frontend container for testing
