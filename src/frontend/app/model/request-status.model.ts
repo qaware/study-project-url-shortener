@@ -1,0 +1,5 @@
+export enum ShortenStatus {
+    REQUEST_SUCCESS = 'REQUEST_SUCCESS',
+    REQUST_FAILURE = 'REQUST_FAILURE',
+    MISSING_URL = "MISSING_URL"
+}

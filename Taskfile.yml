@@ -43,7 +43,7 @@ tasks:
 
   run-frontend-dev:
     cmds:
-      - cd src/frontend && npm run ng serve
+      - cd src/frontend && npm run ng -- serve --host 0.0.0.0
     desc: Run the frontend container for testing
 
   run-dev:

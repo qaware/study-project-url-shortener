@@ -1,12 +1,9 @@
-.app {
-    padding-left: 20px;
+:host {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.input-area {
-    display: flex;
-    align-items: baseline;
-    
-    button {
-      margin-left: 8px;
-    }
-  }
+app-request-status {
+  padding-top: 10px;
+}

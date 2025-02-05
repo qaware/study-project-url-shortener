@@ -1,0 +1,23 @@
+.success {
+  background-color: rgba(0, 128, 0, 0.2);
+  color: green;
+  padding: 10px;
+  border-radius: 4px;
+  margin-top: 10px;
+}
+
+.warning {
+  background-color: rgba(255, 140, 0, 0.2);
+  color: orange;
+  padding: 10px;
+  border-radius: 4px;
+  margin-top: 10px;
+}
+
+.error {
+  background-color: rgba(255, 0, 0, 0.2);
+  color: red;
+  padding: 10px;
+  border-radius: 4px;
+  margin-top: 10px;
+}
