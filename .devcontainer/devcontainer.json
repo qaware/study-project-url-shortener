@@ -1,0 +1,25 @@
+{
+  "name": "Node 22 & Python 3.13 DevContainer",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "."
+  },
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/bash"
+  },
+  "extensions": ["ms-vscode.node-debug2", "ms-python.python"],
+  "postCreateCommand": "task setup",
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Run Taskfile",
+        "type": "shell",
+        "command": "task",
+        "problemMatcher": []
+      }
+    ]
+  },
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind",
+  "workspaceFolder": "/workspace"
+}
