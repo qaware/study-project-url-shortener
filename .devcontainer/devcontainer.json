@@ -5,6 +5,10 @@
     "dockerfile": "Dockerfile",
     "context": "."
   },
+  "mounts": [
+    // Bind the host Docker socket to allow Docker CLI inside the container to communicate with the host's Docker daemon
+    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+  ],
   "settings": {
     "terminal.integrated.shell.linux": "/bin/bash"
   },

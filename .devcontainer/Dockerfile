@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y \
     liblzma-dev \
     tk-dev \
     curl \
+    docker.io \
     python3-venv && \
     rm -rf /var/lib/apt/lists/*
 
