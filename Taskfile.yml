@@ -6,37 +6,19 @@ includes:
     flatten: true
 
 tasks:
-  build-backend:
+  build:
     cmds:
-      - docker build -t url-shortener-backend -f ./src/backend/Dockerfile .
-    desc: Build the backend Docker image
-
-  build-frontend:
-    cmds:
-      - docker build -t url-shortener-frontend -f src/frontend/Dockerfile .
-    desc: Build the frontend Docker image
-
-  run-backend:
-    deps:
-      - create-docker-network
-      - build-backend
-    cmds:
-      - docker run -d --network url-shortener-net -p 8000:8000 --name backend url-shortener-backend
-    desc: Run the backend container
-
-  run-frontend:
-    deps:
-      - create-docker-network
-      - build-frontend
-    cmds:
-      - docker run -d --network url-shortener-net -p 80:80 --name frontend url-shortener-frontend
-    desc: Run the frontend container
+      - docker build -t url-shortener .
+    desc: Build the applications Docker image
 
   run:
-    deps: [stop, build-backend, build-frontend, run-backend, run-frontend]
-    desc: Build and run both backend and frontend
+    deps:
+      - stop
+      - build
+    cmds:
+      - docker run -d -p 80:80 -p 8000:8000 --name url-shortener url-shortener     
+    desc: Stop, build and run the url shortener container
 
-  # TODO: does run-backend-dev and run-frontend-dev see each other?
   run-backend-dev:
     cmds:
       - cd src/backend && python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt && uvicorn main:app --reload --port 8000
@@ -47,37 +29,26 @@ tasks:
       - cd src/frontend && npm run start
     desc: Run the frontend container for testing
 
-  create-docker-network:
-    cmds:
-      - docker network create url-shortener-net || true
-    desc: Create a Docker network
-
   stop:
     cmds:
-      - docker stop $(docker ps -aq) || true
-      - docker rm $(docker ps -aq) || true
-    desc: Stop running containers gracefully
-
-  kill:
-    cmds:
-      - docker kill $(docker ps -aq) || true
-      - docker rm $(docker ps -aq) || true
-    desc: Kill running containers
+      - docker stop url-shortener || true # Stop container
+      - docker rm url-shortener || true # Remove container
+    desc: Stop running url-shortener container
 
   restart: 
     deps: [stop, run, stats]
     desc: Restarts all containers
 
-  logs-frontend:
+  logs:
     cmds:
-      - docker logs frontend
+      - docker logs url-shortener
     desc: Show frontend logs
 
-  logs-backend:
+  attach:
     cmds:
-      - docker logs backend
-    desc: Show backend logs
-    
+      - docker exec -it url-shortener sh
+    desc: Attach to the frontend container
+
   stats:
     cmds:
       - docker stats -a

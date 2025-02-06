@@ -2,7 +2,6 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import random
 import string
-from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
@@ -22,7 +21,7 @@ def shorten_url(request: UrlRequest):
     while short_code in url_store:
         short_code = generate_short_code()
     url_store[short_code] = request.url
-    return {"short_code": short_code, "long_url": request.url}
+    return {short_code}
 
 @app.get("/{short_code}")
 def get_long_url(short_code: str):

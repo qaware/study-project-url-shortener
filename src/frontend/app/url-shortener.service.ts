@@ -3,10 +3,6 @@ import { inject, Injectable } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
 import { firstValueFrom } from 'rxjs';
 
-interface ShortenResponse {
-  short_code: string;
-  long_url: string;
-}
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +18,7 @@ export class UrlShortenerService {
    * @param url - The original long URL to shorten.
    * @returns A promise that resolves to the shortened URL response.
    */
-  public async shortenUrl(url: string): Promise<ShortenResponse> {
+  public async shortenUrl(url: string): Promise<string> {
     const apiUrl = `${this.backendBasePath}/shorten`;
 
     // Log the outgoing request with payload details.
@@ -33,7 +29,7 @@ export class UrlShortenerService {
     try {
       // Await the response from the HTTP POST request.
       const response = await firstValueFrom(
-        this.http.post<ShortenResponse>(apiUrl, { url })
+        this.http.post<string>(apiUrl, { url })
       );
 
       // Log successful request completion.

@@ -86,8 +86,8 @@ export class UrlShortenerComponent {
 
     this.shorteningUrlInProgress.set(true);
     try {
-      const response = await this.urlShortenerService.shortenUrl(url);
-      this.shortPath.set(response.short_code);
+      const shortPath = await this.urlShortenerService.shortenUrl(url);
+      this.shortPath.set(shortPath);
       this.url.set(undefined);
       this.status.set(ShortenStatus.REQUEST_SUCCESS);
     } catch (error) {
