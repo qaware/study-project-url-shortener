@@ -1,5 +1,6 @@
 {
   "name": "Node 22 & Python 3.13 DevContainer",
+  "forwardPorts": [80],
   "build": {
     "dockerfile": "Dockerfile",
     "context": "."
@@ -20,6 +21,6 @@
       }
     ]
   },
-  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind",
-  "workspaceFolder": "/workspace"
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/study-project-url-shortener,type=bind",
+  "workspaceFolder": "/workspaces/study-project-url-shortener"
 }

@@ -17,7 +17,8 @@ RUN apt-get update && apt-get install -y \
     libexpat1-dev \
     liblzma-dev \
     tk-dev \
-    curl && \
+    curl \
+    python3-venv && \
     rm -rf /var/lib/apt/lists/*
 
 # Download, compile, and install Python 3.13
@@ -32,5 +33,7 @@ RUN wget https://www.python.org/ftp/python/3.13.0/Python-3.13.0.tgz && \
 
 # Install Taskfile (Go Task)
 RUN curl -s https://taskfile.dev/install.sh | sh
+
+EXPOSE 80
 
 WORKDIR /workspace
