@@ -26,7 +26,7 @@ tasks:
 
   run-frontend-dev:
     cmds:
-      - cd src/frontend && npm run start
+      - cd src/frontend && npm install && npm run start
     desc: Run the frontend container for testing
 
   stop:
