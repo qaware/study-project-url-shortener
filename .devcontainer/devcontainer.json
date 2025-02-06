@@ -8,7 +8,12 @@
   "settings": {
     "terminal.integrated.shell.linux": "/bin/bash"
   },
-  "extensions": ["ms-vscode.node-debug2", "ms-python.python"],
+  "extensions": [
+    "ms-vscode.node-debug2",
+    "ms-python.python",
+    "johnpapa.angular-essentials",
+    "dbaeumer.vscode-eslint"
+  ],
   "postCreateCommand": "task setup",
   "tasks": {
     "version": "2.0.0",
