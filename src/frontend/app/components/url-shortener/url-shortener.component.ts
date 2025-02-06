@@ -25,8 +25,6 @@ import { UrlShortenerService } from '../../url-shortener.service';
     StatusComponent
   ],
   template: `
-    <h1>URL Shortener</h1>
-    
     <mat-form-field appearance="outline">
       <input matInput input [(ngModel)]="url" placeholder="Enter URL" />
       <mat-label>URL</mat-label>
@@ -55,14 +53,6 @@ export class UrlShortenerComponent {
   protected readonly errorMessage = signal<string | undefined>(undefined);
   protected readonly shorteningUrlInProgress = signal(false);
   protected readonly status = signal<ShortenStatus | undefined>(undefined);
-
-  private readonly resetstatus = effect(() => {
-    if (this.status()) {
-      setTimeout(() => {
-        this.status.set(undefined);
-      }, 3000);
-    }
-  });
 
   private readonly logger = inject(NGXLogger);
   private readonly urlShortenerService = inject(UrlShortenerService);

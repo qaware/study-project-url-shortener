@@ -26,5 +26,5 @@ def shorten_url(request: UrlRequest):
 @app.get("/{short_code}")
 def get_long_url(short_code: str):
     if short_code in url_store:
-        return {"long_url": url_store[short_code]}
+        return {url_store[short_code]}
     raise HTTPException(status_code=404, detail="Short URL not found")

@@ -4,15 +4,15 @@
   align-items: center;
 }
 
+.short-path-result,
 app-status {
-margin-bottom: 30px;
+  margin-bottom: 15px;
+  margin-top: -5px;
 }
 
-.short-path-result {
-background-color: rgba(0, 128, 0, 0.2);
-color: green;
-padding: 10px;
-border-radius: 4px;
-margin-top: 10px;
-margin-bottom: 30px;
+.short-path-result {  
+  background-color: rgba(0, 128, 0, 0.2);
+  color: green;
+  padding: 10px;
+  border-radius: 4px;
 }

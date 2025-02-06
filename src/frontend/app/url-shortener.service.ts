@@ -48,10 +48,10 @@ export class UrlShortenerService {
     }
   }
 
-  public async getLongUrl(shortCode: string): Promise<{ long_url: string }> {
+  public async getLongUrl(shortCode: string): Promise<string> {
     const apiUrl = `${this.backendBasePath}/${shortCode}`;
     try {
-      return await firstValueFrom(this.http.get<{ long_url: string }>(apiUrl));
+      return await firstValueFrom(this.http.get<string>(apiUrl));
     } catch (error: unknown) {
       this.logger.error('Error fetching long URL for short code:', error);
       throw error;
