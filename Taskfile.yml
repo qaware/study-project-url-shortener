@@ -11,6 +11,7 @@ tasks:
       - docker build -t url-shortener .
     desc: Build the applications Docker image
 
+  # TODO: remove this shit
   run:
     deps:
       - stop

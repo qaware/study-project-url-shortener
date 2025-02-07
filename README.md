@@ -14,7 +14,10 @@ This project is a demonstration of a URL shortener application built using Angul
 - taskfile
 - docker commands
   
+# What to do
+## teil 1
 
+## teil 2
 ---- Previous version -->
 
 
