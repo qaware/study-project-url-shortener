@@ -6,12 +6,6 @@ includes:
     flatten: true
 
 tasks:
-  build:
-    cmds:
-      - docker build -t url-shortener .
-    desc: Build the applications Docker image
-
-  # TODO: remove this shit
   run:
     deps:
       - stop
@@ -19,6 +13,11 @@ tasks:
     cmds:
       - docker run -d -p 80:80 -p 8000:8000 --name url-shortener url-shortener     
     desc: Stop, build and run the url shortener container
+
+  build:
+    cmds:
+      - docker build -t url-shortener .
+    desc: Build the applications Docker image
 
   run-backend-dev:
     cmds:

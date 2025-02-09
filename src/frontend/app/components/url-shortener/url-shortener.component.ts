@@ -36,7 +36,7 @@ import { UrlShortenerService } from '../../url-shortener.service';
       Short Path: <a href="{{ shortPath() }}">{{ shortPath() }}</a>
     </p>
     } @else if (status()){
-      <app-status [status]="status()" />
+      <app-status [status]="status()" [errorMessage]="errorMessage()"/>
     }
 
     <button mat-raised-button (click)="shorten()" color="primary">
@@ -53,7 +53,7 @@ export class UrlShortenerComponent {
   protected readonly errorMessage = signal<string | undefined>(undefined);
   protected readonly shorteningUrlInProgress = signal(false);
   protected readonly status = signal<ShortenStatus | undefined>(undefined);
-
+  
   private readonly logger = inject(NGXLogger);
   private readonly urlShortenerService = inject(UrlShortenerService);
 
@@ -83,8 +83,14 @@ export class UrlShortenerComponent {
     } catch (error) {
       this.logger.error('Failed to shorten URL', error);
       this.status.set(ShortenStatus.REQUST_FAILURE);
+      this.extractAndSetErrorMessage(error);
     } finally {
       this.shorteningUrlInProgress.set(false);
     }
+  }
+
+  private extractAndSetErrorMessage(error: any) {
+    console.warn(error)
+    this.errorMessage.set(error?.error.detail);
   }
 }

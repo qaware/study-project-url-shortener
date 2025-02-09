@@ -16,10 +16,14 @@ def generate_short_code(length: int = 6) -> str:
 
 @app.post("/shorten")
 def shorten_url(request: UrlRequest):
-    # TODO: do not shorten if already contained
+
+    if request.url in url_store.values():
+        raise HTTPException(status_code=400, detail="URL was already shortened previously")
+
     short_code = generate_short_code()
     while short_code in url_store:
         short_code = generate_short_code()
+
     url_store[short_code] = request.url
     return {short_code}
 
@@ -27,4 +31,5 @@ def shorten_url(request: UrlRequest):
 def get_long_url(short_code: str):
     if short_code in url_store:
         return {url_store[short_code]}
+    
     raise HTTPException(status_code=404, detail="Short URL not found")

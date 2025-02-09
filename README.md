@@ -1,9 +1,52 @@
 
 # UrlShortener
 
-## Project Overview
-
 This project is a demonstration of a URL shortener application built using Angular and Python. The project is intended for educational and demonstrative purposes, providing a hands-on example of how to work with Angular, Python, Docker and some further tools (Taskfile, ...).
+
+## Requirements
+
+To use this project locally, the followin dependencies have to be installed:
+
+- node version 22 including npm
+- python version 3.13
+- taskfile version 3.40
+- docker
+
+## Usage
+
+This section contains basic information about how the project shall be used.
+
+Predefined tasks can be listed by simply entering `task` in the terminal. This lists all defined Taskfile tasks.
+
+### Start the Application
+
+Two differnt modes are implemented for starting the project:
+
+1. Development:
+    - Frontend and backend are executed independently by using commands `task run-backend-dev` and `task run-frontend-dev`.
+    - This mode auto-updates running frontend and backend when changes to the corresponding code base were noticed.
+    - The UI can be viewed locally at URL `http://localhost:80`
+    - The backend can be reached locally via URL `http://localhost:8000`
+    - The whole application will only work if both, frontend and backend, are running
+2. Production
+    - Application can be run via command `task run`
+      - The commands includes
+        - stopping the application
+        - building the image
+        - using the build image to start the docker container
+    - Builds an image using `./Dockerfile` and uses it to start a docker container.
+    - The `Dockerfile` contains both, frontend and backend.
+    - The UI can be viewed locally at URL `http://localhost:8000`
+
+### Github Codespace
+
+A working environment for Github Codespaces is defined within `./.devcontainer`. It includes all listed requirements in section [Requirements](#requirements)
+
+## Task
+
+TODO:
+This section is to be filled for the corresponding task, depending on what students shall do.
+The general idea is to remove funcitonality, which students have to fill in later on.
 
 <!-- # Requirements
 
@@ -14,59 +57,11 @@ This project is a demonstration of a URL shortener application built using Angul
 - taskfile
 - docker commands
   
+# Aufgabe
+hier ausfü+llen lassen
 # What to do
 ## teil 1
 
 ## teil 2
+
 ---- Previous version -->
-
-
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.1.5.
-
-## Development server
-
-To start a local development server, run:
-
-```bash
-npm run start
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-npm run ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-npm run ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-npm run build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-npm run test
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
