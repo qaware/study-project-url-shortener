@@ -38,6 +38,12 @@ Two differnt modes are implemented for starting the project:
     - The `Dockerfile` contains both, frontend and backend.
     - The UI can be viewed locally at URL `http://localhost:8000`
 
+### Testing the Backend
+
+The following Taskfile tasks have been designed to test the endpoints for shortening URLs and retrieving the corresponding long version of a previously shortend URL:
+    - `task execute-shorten-local`: Shortens an URL. To shortend you presonal URL, update the corresponding task within file `Request.yml` by replacing the string `<your-long-url>` with your URL.
+    - `task execute-get-long-url-local`: Change the task within file `Request.yml` to use a previously shortend URL. For that, simply replace the string `<shortend-url>` with the shortend code.
+
 ### Github Codespace
 
 A working environment for Github Codespaces is defined within `./.devcontainer`. It includes all listed requirements in section [Requirements](#requirements)

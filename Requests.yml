@@ -7,10 +7,10 @@ tasks:
       - |
         curl -vX POST http://localhost:8000/shorten \
           -H "Content-Type: application/json" \
-          -d '{"url": "https://example.com/your-long-url"}'
+          -d '{"url": "<your-long-url>"}'
     desc: Call the shorten endpoint locally
 
   execute-get-long-url-local:
     cmds:
-      - curl -vX GET http://localhost:8000/AotyTC
+      - curl -vX GET http://localhost:8000/<shortend-url>
     desc: Call the get long URL endpoint locally

@@ -33,7 +33,7 @@ import { UrlShortenerService } from '../../url-shortener.service';
     <!-- Display shortend path -->
     @if (shortPath()) {
     <p class="short-path-result">
-      Short Path: <a href="{{ shortPath() }}">{{ shortPath() }}</a>
+      Short Path: <a href="{{ getFullShortPath() }}">{{ getFullShortPath() }}</a>
     </p>
     } @else if (status()){
       <app-status [status]="status()" [errorMessage]="errorMessage()"/>
@@ -87,6 +87,10 @@ export class UrlShortenerComponent {
     } finally {
       this.shorteningUrlInProgress.set(false);
     }
+  }
+
+  protected getFullShortPath(): string | undefined {
+    return window.location.href + this.shortPath();
   }
 
   private extractAndSetErrorMessage(error: any) {
