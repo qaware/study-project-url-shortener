@@ -12,5 +12,20 @@ tasks:
 
   execute-get-long-url-local:
     cmds:
-      - curl -vX GET http://localhost:8000/<shortend-url>
+      - curl -vX GET http://localhost:8000/get-long-url/<shortend-url>
     desc: Call the get long URL endpoint locally
+
+  execute-get-qr-code:
+    cmds:
+      - curl -vX GET http://localhost:8000/get-qr-code/<url>
+    desc: Call the get QR code endpoint with short code and base URL
+
+  execute-example-endpoint:
+    cmds:
+      - curl -vX GET "http://localhost:8000/example?param=<your-param>"
+    desc: Call the example endpoint with a parameter
+
+  execute-example-image-endpoint:
+    cmds:
+      - curl -vX GET http://localhost:8000/example-image
+    desc: Call the example image endpoint

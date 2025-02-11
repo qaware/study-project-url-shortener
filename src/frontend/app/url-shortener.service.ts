@@ -3,7 +3,6 @@ import { inject, Injectable } from '@angular/core';
 import { NGXLogger } from 'ngx-logger';
 import { firstValueFrom } from 'rxjs';
 
-
 @Injectable({
   providedIn: 'root',
 })
@@ -47,13 +46,36 @@ export class UrlShortenerService {
       throw error;
     }
   }
-
+  /**
+   * Retrieves the original long URL associated with the provided short code.
+   *
+   * @param shortCode - The short code corresponding to the long URL.
+   * @returns A promise that resolves to the long URL.
+   */
   public async getLongUrl(shortCode: string): Promise<string> {
-    const apiUrl = `${this.backendBasePath}/${shortCode}`;
+    const apiUrl = `${this.backendBasePath}/get-long-url/${shortCode}`;
     try {
       return await firstValueFrom(this.http.get<string>(apiUrl));
     } catch (error: unknown) {
       this.logger.error('Error fetching long URL for short code:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Envodes an URL in a QR code image and returns the base64 encoded image.
+   *
+   * @param url - The url which should be encoded in the QR code.
+   * @returns A promise that resolves to a base64 string containing the encoded QR code image.
+   */
+  public async getQrCode(url: string): Promise<{image_base64: string}> {
+    const apiUrl = `${this.backendBasePath}/get-qr-code/${url}`;
+    try {
+      return await firstValueFrom(
+        this.http.get<{image_base64: string}>(apiUrl)
+      );
+    } catch (error: unknown) {
+      this.logger.error('Error fetching QR code for short code:', error);
       throw error;
     }
   }
