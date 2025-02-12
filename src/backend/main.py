@@ -9,8 +9,7 @@ import string
 
 app = FastAPI()
 
-# In-memory store for shortened URLs
-url_store = {}
+# TODO: implement some kind of storage for the URLs and their associated short codes
 
 class UrlRequest(BaseModel):
     url: str
@@ -20,40 +19,25 @@ def generate_short_code(length: int = 6) -> str:
 
 @app.post("/shorten")
 def shorten_url(request: UrlRequest):
-
-    if request.url in url_store.values():
-        raise HTTPException(status_code=400, detail="URL was already shortened previously")
-
-    short_code = generate_short_code()
-    while short_code in url_store:
-        short_code = generate_short_code()
-
-    url_store[short_code] = request.url
+    # TODO: implement this function
+    # Should store url which is contained in request, generate a (random?) associated short code and return that short code
+    short_code = ""
     return {short_code}
 
 @app.get("/get-long-url/{short_code}")
 def get_long_url(short_code: str):
-    if short_code in url_store:
-        return {url_store[short_code]}
-    
-    raise HTTPException(status_code=404, detail="Short URL not found")
-
+    # TODO: implement this function
+    # Should take the short_code to fetch the associated long URL 
+    # Should return HTTP 404 (not found) if the short_code is not found
+    long_url = ""
+    return {long_url}
 
 @app.get("/get-qr-code/{url}")
 def get_qr_code(url: str):
-    qr = qrcode.QRCode(
-        version=1,
-        error_correction=qrcode.constants.ERROR_CORRECT_L,
-        box_size=10,
-        border=0,
-    )
-    qr.add_data(url)
-    qr.make(fit=True)
-    img = qr.make_image(fill_color="black", back_color="white")
-    buf = io.BytesIO()
-    img.save(buf, format="PNG")
-    buf.seek(0)
-    encoded_string = base64.b64encode(buf.read()).decode("utf-8")
+    # TODO: implement this function
+    # Hint: You can use the qrcode library to generate QR codes. 
+    # Take a look at the documentation here: https://pypi.org/project/qrcode/
+    encoded_string = ""
     return {"image_base64": f"data:image/png;base64,{encoded_string}"}
 
 # Returns simple string message
