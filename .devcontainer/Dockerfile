@@ -19,7 +19,11 @@ RUN apt-get update && apt-get install -y \
     tk-dev \
     curl \
     docker.io \
-    python3-venv && \
+    python3-venv \
+    apt-transport-https \
+    ca-certificates \
+    gnupg \
+    curl && \
     rm -rf /var/lib/apt/lists/*
 
 # Download, compile, and install Python 3.13
@@ -31,6 +35,9 @@ RUN wget https://www.python.org/ftp/python/3.13.0/Python-3.13.0.tgz && \
     make altinstall && \
     cd .. && \
     rm -rf Python-3.13.0 Python-3.13.0.tgz
+
+# Install Google Cloud CLI
+RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg && apt-get update -y && apt-get install google-cloud-cli -y
 
 # Install Taskfile (Go Task)
 RUN curl -s https://taskfile.dev/install.sh | sh
