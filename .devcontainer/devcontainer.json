@@ -33,7 +33,7 @@
       }
     ]
   },
-  "postStartCommand": "cd src/frontend && npm install", // Initial setup for frontend for linting to work
+  "postStartCommand": "cd src/frontend && npm install && npm run build", // Initial setup for frontend for linting to work
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/study-project-url-shortener,type=bind",
   "workspaceFolder": "/workspaces/study-project-url-shortener"
 }
