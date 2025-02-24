@@ -38,7 +38,8 @@ def get_qr_code(url: str):
     # Hint: You can use the qrcode library to generate QR codes. 
     # Take a look at the documentation here: https://pypi.org/project/qrcode/
     encoded_string = ""
-    return {"image_base64": f"data:image/png;base64,{encoded_string}"}
+    # return {"image_base64": f"data:image/png;base64,{encoded_string}"}
+    return
 
 # Returns simple string message
 @app.get("/example")
