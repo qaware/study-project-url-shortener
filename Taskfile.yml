@@ -15,3 +15,10 @@ tasks:
     cmds:
       - cd src/frontend && npm install && npm run start
     desc: Run the frontend container for testing
+
+  decrypt-and-login:
+    cmds:
+      - gpg --output credentials.json --decrypt student-service-account-credentials.json.gpg
+      - gcloud auth activate-service-account --key-file=credentials.json
+      - rm credentials.json
+    desc: Decrypt the service account credentials and login to Google
