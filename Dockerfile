@@ -28,6 +28,6 @@ COPY src/backend .
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Expose ports for nginx and uvicorn
-EXPOSE 80
+EXPOSE 8080
 
 CMD ["/usr/bin/supervisord", "-n"]
