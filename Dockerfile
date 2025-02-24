@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y nginx supervisor && rm -rf /var/lib/apt
 # Copy the built Angular app into nginx’s html directory
 COPY --from=frontend-builder /app/dist/url-shortener/browser /usr/share/nginx/html
 # Use the custom nginx configuration (ensure it is compatible with Debian/nginx installed via apt)
+RUN rm /etc/nginx/sites-enabled/default
 COPY src/frontend/nginx/default.conf /etc/nginx/conf.d/default.conf
 
 # Setup backend
