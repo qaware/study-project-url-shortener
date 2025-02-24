@@ -198,7 +198,7 @@ This command utilizes the `./Dockerfile` to create an image and tag it (`-t`) wi
 That image can then be used to start a docker container using the command
 
 ```bash
-docker run -d -p 80:80 -p 8000:8000 --name url-shortener url-shortener
+docker run -d -p 8080:8080 -p 8000:8000 --name url-shortener url-shortener
 ```
 
 Below is a brief explanation of each part of the command.
