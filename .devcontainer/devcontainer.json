@@ -19,6 +19,9 @@
     "dbaeumer.vscode-eslint"
   ],
   "postCreateCommand": "task setup",
+  "remoteEnv": {
+    "GAR": "europe-west4-docker.pkg.dev/recr-praxistag-url-shortener/student-images"
+  },
   "tasks": {
     "version": "2.0.0",
     "tasks": [

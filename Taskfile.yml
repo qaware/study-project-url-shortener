@@ -21,4 +21,7 @@ tasks:
       - gpg --output credentials.json --decrypt student-service-account-credentials.json.gpg
       - gcloud auth activate-service-account --key-file=credentials.json
       - rm credentials.json
+      - gcloud auth configure-docker europe-west4-docker.pkg.dev --quiet
+      - gcloud config set project recr-praxistag-url-shortener --quiet
+      - gcloud config set run/region europe-west4 --quiet
     desc: Decrypt the service account credentials and login to Google
