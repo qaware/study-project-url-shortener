@@ -5,25 +5,6 @@ includes:
     taskfile: ./Requests.yml
 
 tasks:
-  run:
-    desc: Stop, build and run the url shortener container
-    deps:
-      - stop
-      - build
-    cmds:
-      - docker run -d -p 8080:8080 -p 8000:8000 --name url-shortener url-shortener     
-
-  stop:
-    desc: Stop and remove the url shortener container if it exists
-    cmds:
-      - docker stop url-shortener || true
-      - docker rm url-shortener || true
-    
-  build:
-    desc: Build the applications Docker image
-    cmds:
-      - docker build -t url-shortener .
-
   run-backend-dev:
     desc: Run the backend container for testing
     cmds:
