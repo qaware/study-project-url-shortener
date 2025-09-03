@@ -58,37 +58,6 @@ Also, there already are working test-endpoints within `main.py` with correspondi
 
 Optionally, the QR-Code endpoint `get_qr_code` can be implemented. It should take a URL parameter, generate a QR code from it, encode that QR code as a base64 string, and then return the result.
 
-### 2. Platform Engineering
-
-We want to deploy our application to the cloud somewhere, preferably somewhere more permanent than a temporary Cloud IDE instance. 
-
-For the purposes of our workshop, we'll be deploying containers as Google Cloud Run services.
-
-First, we should verify that our application is running as expected locally using Docker (ctrl+f "docker build" and "docker run" below, and that we can access the application on localhost:80 (or is it localhost:8080?)).
-
-Next, we'll push our image to our Google "Artifact Registry" (GAR), which is a home for container images. The address of our GAR is stored in the environment variable GAR.
-
-```bash
-docker build $GAR/my-unique-image-name .
-docker push $GAR/my-unique-image-name
-```
-
-Then, we'll create a Google Cloud Run service based on our image.
-
-```bash
-gcloud run deploy --image $GAR/my-unique-image-name --allow-unauthenticated --port 8080
-```
-
-Extra credit: Can you figure out 
-1. What images have been pushed to the registry? (see https://cloud.google.com/sdk/gcloud/reference/artifacts)
-1. What Cloud Run Services are running in our project? Are any of them broken?
-
-Finally, let's create a short URL for our service:
-```bash
-gcloud beta run domain-mappings create --service my-service-name --domain=my-fancy-domain.0qa.pw
-```
-(Warning: This takes at least 15 minutes).
-
 ## Usage
 
 This section contains basic information about how the project shall be used.

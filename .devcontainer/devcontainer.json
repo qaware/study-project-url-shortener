@@ -18,21 +18,6 @@
     "johnpapa.angular-essentials",
     "dbaeumer.vscode-eslint"
   ],
-  "postCreateCommand": "task setup",
-  "remoteEnv": {
-    "GAR": "europe-west4-docker.pkg.dev/recr-praxistag-url-shortener/student-images"
-  },
-  "tasks": {
-    "version": "2.0.0",
-    "tasks": [
-      {
-        "label": "Run Taskfile",
-        "type": "shell",
-        "command": "task",
-        "problemMatcher": []
-      }
-    ]
-  },
   "postStartCommand": "cd src/frontend && npm install && npm run build", // Initial setup for frontend for linting to work
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/study-project-url-shortener,type=bind",
   "workspaceFolder": "/workspaces/study-project-url-shortener"
