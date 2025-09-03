@@ -1,0 +1,86 @@
+.stats-table {
+  width: 100%;
+  max-width: 100%;
+  margin-top: 20px;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border: 1px solid #e0e0e0;
+  table-layout: fixed; /* Prevent table from expanding based on content */
+}
+
+.stats-table thead th {
+  background: linear-gradient(135deg, #6c757d, #495057);
+  color: white;
+  font-weight: 600;
+  padding: 16px 12px;
+  border-bottom: 2px solid #dee2e6;
+  font-size: 0.95em;
+}
+
+.stats-table tbody td {
+  padding: 14px 12px;
+  border-bottom: 1px solid #f8f9fa;
+  background: white;
+}
+
+.stats-table tbody tr:nth-child(even) td {
+  background: #fafbfc;
+}
+
+.stats-table tbody tr:hover td {
+  background: #e3f2fd;
+  transition: background-color 0.2s ease;
+}
+
+.url-cell {
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.url-cell a {
+  color: #1976d2;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.url-cell a:hover {
+  text-decoration: underline;
+  color: #1565c0;
+}
+
+.short-code-cell a {
+  color: #8e24aa;
+  text-decoration: none;
+  font-weight: 600;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  background: linear-gradient(135deg, #f3e5f5, #e1bee7);
+  padding: 6px 12px;
+  border-radius: 20px;
+  display: inline-block;
+  border: 1px solid #ce93d8;
+  transition: all 0.2s ease;
+}
+
+.short-code-cell a:hover {
+  text-decoration: none;
+  background: linear-gradient(135deg, #8e24aa, #7b1fa2);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(142, 36, 170, 0.3);
+}
+
+.click-count {
+  background: linear-gradient(135deg, #4caf50, #388e3c);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-weight: 600;
+  font-size: 0.9em;
+  display: inline-block;
+  min-width: 30px;
+  text-align: center;
+}

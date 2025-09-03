@@ -69,7 +69,9 @@ export class UrlShortenerService {
    * @returns A promise that resolves to a base64 string containing the encoded QR code image.
    */
   public async getQrCode(url: string): Promise<{image_base64: string}> {
-    const apiUrl = `${this.backendBasePath}/get-qr-code/${url}`;
+    // URL encode the URL to handle special characters properly
+    const encodedUrl = encodeURIComponent(url);
+    const apiUrl = `${this.backendBasePath}/get-qr-code/${encodedUrl}`;
     try {
       return await firstValueFrom(
         this.http.get<{image_base64: string}>(apiUrl)

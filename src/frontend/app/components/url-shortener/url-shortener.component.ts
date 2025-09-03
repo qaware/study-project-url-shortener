@@ -1,16 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { NGXLogger } from 'ngx-logger';
+import { RouterLink } from '@angular/router';
 import { ShortenStatus } from '../../model/status.model';
+import { QrCodeContainer } from '../qr-code/qr-code.container';
 import { StatusComponent } from '../status/status.component';
-import { UrlShortenerService } from '../../url-shortener.service';
-import { QrCodeComponent } from '../qr-code/qr-code.component';
 
 @Component({
   selector: 'app-url-shortener',
@@ -23,100 +23,117 @@ import { QrCodeComponent } from '../qr-code/qr-code.component';
     MatButtonModule,
     FormsModule,
     MatProgressSpinnerModule,
+    MatCardModule,
+    RouterLink,
     StatusComponent,
-    QrCodeComponent
+    QrCodeContainer
   ],
   template: `
-    <mat-form-field appearance="outline">
-      <input matInput input [(ngModel)]="url" placeholder="Enter URL" />
-      <mat-label>URL</mat-label>
-    </mat-form-field>
+    <div class="url-shortener-container">
+      <mat-card class="main-card">
+        <mat-card-header>
+          <mat-card-title>Shorten Your URL</mat-card-title>
+        </mat-card-header>
+        
+        <mat-card-content>
+          <mat-form-field appearance="outline" class="url-input">
+            <input matInput 
+                   [value]="url() || ''" 
+                   (input)="onUrlInput($event)" 
+                   (paste)="onUrlInput($event)"
+                   (change)="onUrlInput($event)"
+                   (keydown.enter)="onShortenRequested()" 
+                   placeholder="Enter URL" />
+            <mat-label>URL</mat-label>
+          </mat-form-field>
 
-    <app-qr-code [url]="this.url()"/>
+          <app-qr-code-container [url]="url()"/>
 
-    <!-- Display shortend path -->
-    @if (shortPath()) {
-    <p class="short-path-result">
-      Short Path:
-      <a href="{{ getFullShortPath() }}">{{ getFullShortPath() }}</a>
-    </p>
-    } @else if (status()){
-      <app-status [status]="status()" [errorMessage]="errorMessage()" />
-    }
+          <!-- Display shortened path -->
+          @if (shortPath()) {
+            <div class="result-section">
+              <p class="short-path-result">
+                Short Path:
+                <a [href]="getFullShortPath()" target="_blank" class="short-url-link">{{ getFullShortPath() }}</a>
+              </p>
+            </div>
+          } @else if (status()){
+            <app-status [status]="status()" [errorMessage]="errorMessage()" />
+          }
 
-    <button mat-raised-button (click)="shorten()" color="primary">
-      @if(shorteningUrlInProgress()) {
-      <mat-progress-spinner mode="indeterminate" diameter="20" />
-      } @else { Shorten! }
-    </button>
+          <button mat-raised-button (click)="onShortenRequested()" color="primary" class="shorten-btn">
+            @if(shorteningUrlInProgress()) {
+              <mat-progress-spinner mode="indeterminate" diameter="20" />
+            } @else { 
+              <ng-container>
+                <mat-icon>link</mat-icon>
+                Shorten!
+              </ng-container>
+            }
+          </button>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Stats preview - only shows if feature is available -->
+      @if (isStatsAvailable() && totalUrls() > 0) {
+        <mat-card class="stats-preview">
+          <mat-card-header>
+            <mat-card-title>Quick Stats</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="quick-stats">
+              <div class="stat">
+                <strong>{{ totalUrls() }}</strong> URLs created
+              </div>
+              <div class="stat">
+                <strong>{{ totalClicks() }}</strong> total clicks
+              </div>
+            </div>
+            <a routerLink="/stats" mat-button color="primary">
+              <mat-icon>bar_chart</mat-icon>
+              View Full Statistics
+            </a>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
   `,
   styleUrls: ['./url-shortener.component.scss'],
 })
 export class UrlShortenerComponent {
-  protected readonly url = signal<string | undefined>(undefined);
-  protected readonly shortPath = signal<string | undefined>(undefined);
-  protected readonly errorMessage = signal<string | undefined>(undefined);
-  protected readonly shorteningUrlInProgress = signal(false);
-  protected readonly status = signal<ShortenStatus | undefined>(undefined);
+  readonly url = input<string | undefined>();
+  readonly shortPath = input<string | undefined>();
+  readonly errorMessage = input<string | undefined>();
+  readonly shorteningUrlInProgress = input<boolean>(false);
+  readonly status = input<ShortenStatus | undefined>();
+  readonly isStatsAvailable = input<boolean>(false);
+  readonly totalUrls = input<number>(0);
+  readonly totalClicks = input<number>(0);
 
-  private readonly logger = inject(NGXLogger);
-  private readonly urlShortenerService = inject(UrlShortenerService);
+  readonly urlChanged = output<string | undefined>();
+  readonly shortenRequested = output<void>();
 
-  protected async shorten() {
-    this.shortPath.set(undefined);
-
-    if (this.shorteningUrlInProgress()) {
-      this.logger.info(
-        'Shortening URL is already in progress. Not starting another request.'
-      );
-      return;
+  protected onUrlInput(event: Event) {
+    const target = event.target as HTMLInputElement;
+    
+    // For paste events, we need to wait for the value to be updated
+    if (event.type === 'paste') {
+      setTimeout(() => {
+        const value = target.value.trim() || undefined;
+        this.urlChanged.emit(value);
+      }, 0);
+    } else {
+      const value = target.value.trim() || undefined;
+      this.urlChanged.emit(value);
     }
+  }
 
-    const url = this.url();
-    if (!url) {
-      this.logger.warn('URL is empty');
-      this.status.set(ShortenStatus.MISSING_URL);
-      return;
-    }
-    await this.shortenUrl(url);
+  protected onShortenRequested() {
+    this.shortenRequested.emit();
   }
 
   protected getFullShortPath(): string | undefined {
+    if (!this.shortPath()) return undefined;
     return window.location.href + this.shortPath();
-  }
-
-  private async shortenUrl(url: string) {
-    this.shorteningUrlInProgress.set(true);
-    try {
-      const shortPath = await this.urlShortenerService.shortenUrl(url);
-
-      // Make sure that the short path is not empty
-      if (!shortPath) {
-        throw {
-          error: {
-            detail: 'The returned short path is empty',
-          },
-        };
-      }
-
-      this.shortPath.set(shortPath);
-      this.url.set(undefined);
-      this.status.set(ShortenStatus.REQUEST_SUCCESS);
-
-      return shortPath;
-    } catch (error) {
-      this.logger.error('Failed to shorten URL', error);
-      this.status.set(ShortenStatus.REQUST_FAILURE);
-      this.extractAndSetErrorMessage(error);
-      return undefined;
-    } finally {
-      this.shorteningUrlInProgress.set(false);
-    }
-
-  }
-
-  private extractAndSetErrorMessage(error: any) {
-    const detail = error?.error?.detail || 'An unexpected error occurred';
-    this.errorMessage.set(detail);
   }
 }

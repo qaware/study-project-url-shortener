@@ -1,19 +1,41 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-import os
-import io
 import base64
-import qrcode
+import io
+import os
 import random
 import string
+from datetime import datetime
+from typing import Dict, List
+from urllib.parse import unquote
+
+import qrcode
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
 
 app = FastAPI()
 
 # In-memory store for shortened URLs
-url_store = {}
+url_store: Dict[str, str] = {}
+
+# Click tracking storage with proper typing
+class ClickStatsData(BaseModel):
+    count: int
+    timestamps: List[datetime]
+    original_url: str
+
+# Initialize with proper type annotation
+click_stats: Dict[str, ClickStatsData] = {}
+
+# Store creation times separately to avoid timestamp issues
+url_creation_times: Dict[str, datetime] = {}
 
 class UrlRequest(BaseModel):
   url: str
+
+class ClickStats(BaseModel):
+  short_code: str
+  original_url: str
+  click_count: int
+  created_at: str
 
 def generate_short_code(length: int = 6) -> str:
   return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
@@ -29,11 +51,34 @@ def shorten_url(request: UrlRequest):
     short_code = generate_short_code()
 
   url_store[short_code] = request.url
+  
+  # Store creation time
+  creation_time = datetime.now()
+  url_creation_times[short_code] = creation_time
+  
+  # Initialize click stats for the new URL
+  click_stats[short_code] = ClickStatsData(
+    count=0,
+    timestamps=[],
+    original_url=request.url
+  )
+  
   return {short_code}
 
 @app.get("/get-long-url/{short_code}")
 def get_long_url(short_code: str):
   if short_code in url_store:
+    # Track clicks
+    if short_code not in click_stats:
+      click_stats[short_code] = ClickStatsData(
+        count=0,
+        timestamps=[],
+        original_url=url_store[short_code]
+      )
+    
+    click_stats[short_code].count += 1
+    click_stats[short_code].timestamps.append(datetime.now())
+    
     return {url_store[short_code]}
 
   raise HTTPException(status_code=404, detail="Short URL not found")
@@ -41,13 +86,16 @@ def get_long_url(short_code: str):
 
 @app.get("/get-qr-code/{url}")
 def get_qr_code(url: str):
+  # URL decode the parameter to handle special characters
+  decoded_url = unquote(url)
+  
   qr = qrcode.QRCode(
     version=1,
     error_correction=qrcode.constants.ERROR_CORRECT_L,
     box_size=10,
     border=0,
   )
-  qr.add_data(url)
+  qr.add_data(decoded_url)
   qr.make(fit=True)
   img = qr.make_image(fill_color="black", back_color="white")
   buf = io.BytesIO()
@@ -55,6 +103,53 @@ def get_qr_code(url: str):
   buf.seek(0)
   encoded_string = base64.b64encode(buf.read()).decode("utf-8")
   return {"image_base64": f"data:image/png;base64,{encoded_string}"}
+
+# Click Statistics Endpoints
+@app.get("/stats", response_model=List[ClickStats])
+def get_all_stats():
+  """Get click statistics for all shortened URLs."""
+  stats = []
+  for short_code, data in click_stats.items():
+    # Use stored creation time or first click time, never generate new timestamps
+    created_at = url_creation_times.get(short_code)
+    if not created_at and data.timestamps:
+      created_at = data.timestamps[0]
+    elif not created_at:
+      # Fallback - this shouldn't happen in normal operation
+      created_at = datetime.now()
+    
+    stats.append(ClickStats(
+      short_code=short_code,
+      original_url=data.original_url,
+      click_count=data.count,
+      created_at=created_at.isoformat()
+    ))
+  return stats
+
+@app.get("/stats/{short_code}")
+def get_stats_for_url(short_code: str):
+  """Get detailed statistics for a specific short URL."""
+  if short_code not in url_store:
+    raise HTTPException(status_code=404, detail="Short URL not found")
+  
+  if short_code not in click_stats:
+    return {
+      "short_code": short_code,
+      "original_url": url_store[short_code],
+      "click_count": 0,
+      "recent_clicks": []
+    }
+  
+  data = click_stats[short_code]
+  # Return last 10 clicks for the diagram
+  recent_clicks = [ts.isoformat() for ts in data.timestamps[-10:]]
+  
+  return {
+    "short_code": short_code,
+    "original_url": data.original_url,
+    "click_count": data.count,
+    "recent_clicks": recent_clicks
+  }
 
 # Returns simple string message
 @app.get("/example")
