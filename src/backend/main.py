@@ -42,8 +42,15 @@ def shorten_url(request: UrlRequest, http_request: Request):
     # 1. Generate short code for long url
     # 2. Store the mapping of short code to long url
     # 3. Optional: store click_stats using the class ClickStatsData for the short_code with initial values
-    short_code = ""
-    return {short_code}
+    
+    # short_code = ""
+    # return {short_code}
+    
+    raise HTTPException(
+      status_code=501, 
+      detail="This feature is not yet implemented"
+    )
+
 
 @app.get("/get-long-url/{short_code}")
 def get_long_url(short_code: str):
@@ -51,8 +58,14 @@ def get_long_url(short_code: str):
     # 1. Fetch the long URL from the url_store using the short_code
     # 2. Return HTTP 404 (not found) if the short_code is not found
     # 3. (Optional) Update the click statistics in click_stats for the short_code
-    long_url = ""
-    return {long_url}
+    
+    # long_url = ""
+    # return {long_url}
+    
+    raise HTTPException(
+      status_code=501, 
+      detail="This feature is not yet implemented"
+    )
 
 @app.get("/get-qr-code/{url}")
 def get_qr_code(url: str):
@@ -61,8 +74,14 @@ def get_qr_code(url: str):
     # 2. Return the QR code image as a base64-encoded string
     # Hint: You can use the qrcode library to generate QR codes. 
     # Take a look at the documentation here: https://pypi.org/project/qrcode/
-    encoded_string = ""
+    
+    # encoded_string = ""
     # return {"image_base64": f"data:image/png;base64,{encoded_string}"}
+    
+    raise HTTPException(
+      status_code=501, 
+      detail="This feature is not yet implemented"
+    )
 
 # Click Statistics Endpoints
 @app.get("/stats", response_model=List[ClickStats])
