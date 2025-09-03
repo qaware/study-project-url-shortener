@@ -16,7 +16,7 @@ class ClickStatsData(BaseModel):
     original_url: str
 
 class UrlRequest(BaseModel):
-  url: str
+    url: str
 
 class ClickStats(BaseModel):
   short_code: str
@@ -32,91 +32,35 @@ url_store: Dict[str, str] = {}
 click_stats: Dict[str, ClickStatsData] = {}
 
 def generate_short_code(length: int = 6) -> str:
-  return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
-
-def is_self_referencing(url: str) -> bool:
-  """Check if URL points to this URL shortener service to prevent infinite loops."""
-  try:
-    # Add protocol if missing
-    if not url.startswith(('http://', 'https://')):
-      url = 'http://' + url
-    
-    parsed = urlparse(url)
-    
-    # Known service domains (localhost with common ports)
-    service_domains = {
-      'localhost',
-      'localhost:80', 
-      'localhost:8000',
-      'localhost:8080'
-    }
-    
-    return parsed.netloc.lower() in service_domains
-  except Exception:
-    # If URL parsing fails, allow it (conservative approach)
-    return False
+    return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
 
 @app.post("/shorten")
 def shorten_url(request: UrlRequest):
-  # Check for self-referencing URLs to prevent infinite redirect loops
-  if is_self_referencing(request.url):
-    raise HTTPException(
-      status_code=400, 
-      detail="Cannot shorten URLs that point to this service - this would create an infinite redirect loop. Please use an external URL instead."
-    )
-
-  if request.url in url_store.values():
-    raise HTTPException(status_code=400, detail="URL was already shortened previously")
-
-  short_code = generate_short_code()
-  while short_code in url_store:
-    short_code = generate_short_code()
-
-  url_store[short_code] = request.url
-  
-  # Initialize click stats for the new URL
-  click_stats[short_code] = ClickStatsData(
-    count=0,
-    original_url=request.url
-  )
-  
-  return {short_code}
+    # TODO: implement this function
+    # 1. Generate short code for long url
+    # 2. Store the mapping of short code to long url
+    # 3. Optional: store click_stats using the class ClickStatsData for the short_code with initial values
+    short_code = ""
+    return {short_code}
 
 @app.get("/get-long-url/{short_code}")
 def get_long_url(short_code: str):
-  if short_code in url_store:
-    # Track clicks
-    if short_code not in click_stats:
-      click_stats[short_code] = ClickStatsData(
-        count=0,
-        original_url=url_store[short_code]
-      )
-    
-    click_stats[short_code].count += 1
-    return {url_store[short_code]}
-
-  raise HTTPException(status_code=404, detail="Short URL not found")
-
+    # TODO: implement this function
+    # 1. Fetch the long URL from the url_store using the short_code
+    # 2. Return HTTP 404 (not found) if the short_code is not found
+    # 3. (Optional) Update the click statistics in click_stats for the short_code
+    long_url = ""
+    return {long_url}
 
 @app.get("/get-qr-code/{url}")
 def get_qr_code(url: str):
-  # URL decode the parameter to handle special characters
-  decoded_url = url
-  
-  qr = qrcode.QRCode(
-    version=1,
-    error_correction=qrcode.constants.ERROR_CORRECT_L,
-    box_size=10,
-    border=0,
-  )
-  qr.add_data(decoded_url)
-  qr.make(fit=True)
-  img = qr.make_image(fill_color="black", back_color="white")
-  buf = io.BytesIO()
-  img.save(buf, format="PNG")
-  buf.seek(0)
-  encoded_string = base64.b64encode(buf.read()).decode("utf-8")
-  return {"image_base64": f"data:image/png;base64,{encoded_string}"}
+    # TODO: implement this function
+    # 1. Generate a QR code for the given url parameter
+    # 2. Return the QR code image as a base64-encoded string
+    # Hint: You can use the qrcode library to generate QR codes. 
+    # Take a look at the documentation here: https://pypi.org/project/qrcode/
+    encoded_string = ""
+    # return {"image_base64": f"data:image/png;base64,{encoded_string}"}
 
 # Click Statistics Endpoints
 @app.get("/stats", response_model=List[ClickStats])
@@ -153,21 +97,20 @@ def get_stats_for_url(short_code: str):
     "click_count": data.count,
   }
 
-# Returns simple string message
 @app.get("/example")
 def example_endpoint(param: str):
-  if param == "error":
-    raise HTTPException(status_code=400, detail="Invalid parameter value")
-  return {"message": f"This is an example endpoint with parameter: {param}"}
+    if param == "error":
+        raise HTTPException(status_code=400, detail="Invalid parameter value")
+    return {"message": f"This is an example endpoint with parameter: {param}"}
 
 # Returns image in base64 format
 @app.get("/example-image")
 def example_image_endpoint():
-  file_path = "image.jpeg"
-  if os.path.exists(file_path):
-    with open(file_path, "rb") as image_file:
-      encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
-    prefix = "data:image/jpeg;base64,"
-    return {"image_base64": prefix + encoded_string}
-  else:
-    raise HTTPException(status_code=404, detail="Image not found")
+    file_path = "image.jpeg"
+    if os.path.exists(file_path):
+        with open(file_path, "rb") as image_file:
+            encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
+        prefix = "data:image/jpeg;base64,"
+        return {"image_base64": prefix + encoded_string}
+    else:
+        raise HTTPException(status_code=404, detail="Image not found")
