@@ -29,6 +29,12 @@ tasks:
       - cd src/frontend && npm install && npm run start
     desc: Run the frontend container for testing
 
+  run-dev:
+    desc: Run frontend and backend together; stop both on Ctrl+C
+    deps:
+      - run-backend-dev
+      - run-frontend-dev
+
   stop:
     cmds:
       - docker stop url-shortener || true # Stop container
