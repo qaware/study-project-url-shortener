@@ -4,7 +4,7 @@ import os
 import random
 import string
 from typing import Dict, List
-from urllib.parse import unquote, urlparse
+from urllib.parse import urlparse
 
 import qrcode
 from fastapi import FastAPI, HTTPException
