@@ -35,27 +35,11 @@ tasks:
       - run-backend-dev
       - run-frontend-dev
 
-  stop:
+  open-task:
+    desc: Open the Jira-style task page in your default browser
     cmds:
-      - docker stop url-shortener || true # Stop container
-      - docker rm url-shortener || true # Remove container
-    desc: Stop running url-shortener container
-
-  restart: 
-    deps: [stop, run, stats]
-    desc: Restarts all containers
-
-  logs:
-    cmds:
-      - docker logs url-shortener
-    desc: Show frontend logs
-
-  attach:
-    cmds:
-      - docker exec -it url-shortener sh
-    desc: Attach to the frontend container
-
-  stats:
-    cmds:
-      - docker stats -a
-    desc: Show container stats
+      - >
+        (command -v open >/dev/null 2>&1 && open jira_task.html)
+        || (command -v xdg-open >/dev/null 2>&1 && xdg-open jira_task.html)
+        || (command -v powershell.exe >/dev/null 2>&1 && powershell.exe -NoProfile -Command Start-Process "$(pwd)/jira_task.html")
+        || echo "Please open ./jira_task.html manually in your browser."

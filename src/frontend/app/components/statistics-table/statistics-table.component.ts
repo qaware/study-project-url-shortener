@@ -30,10 +30,7 @@ import { ClickStats } from '../../statistics.service';
         </td>
       </ng-container>
 
-      <ng-container matColumnDef="createdAt">
-        <th mat-header-cell *matHeaderCellDef>Created</th>
-        <td mat-cell *matCellDef="let stat">{{ formatDate(stat.created_at) }}</td>
-      </ng-container>
+      
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
@@ -43,7 +40,7 @@ import { ClickStats } from '../../statistics.service';
 })
 export class StatisticsTableComponent {
   readonly stats = input<ClickStats[]>([]);
-  protected readonly displayedColumns = ['shortCode', 'originalUrl', 'clickCount', 'createdAt'];
+  protected readonly displayedColumns = ['shortCode', 'originalUrl', 'clickCount'];
 
   protected truncateUrl(url: string): string {
     return url.length > 50 ? url.substring(0, 50) + '...' : url;
@@ -64,7 +61,5 @@ export class StatisticsTableComponent {
     return `${baseUrl}/${shortCode}`;
   }
 
-  protected formatDate(dateString: string): string {
-    return new Date(dateString).toLocaleDateString();
-  }
+  
 }

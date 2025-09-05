@@ -27,6 +27,14 @@ git checkout -b <your-branch-name>
 
 For more information about Git, visit section [Git](#git).
 
+### View the Assignment
+
+You can open the detailed task description (Jira‑style page) locally without running the backend:
+
+```bash
+task open-task
+```
+
 ### 1. Application Development
 
 The application which is to be completed is an URL shortener. A URL shortener is a tool that converts a long URL into a shorter, more manageable link. When entered, the shortened URL redirects users to the original destination, often while tracking click analytics.

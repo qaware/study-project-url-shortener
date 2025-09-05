@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="application-name" content="JIRA" data-name="jira" />
+  <meta name="robots" content="noindex" />
+  <title>[PT-101] Implement URL Shortener Backend - ATC Jira</title>
+  <link id="open-search-description-link" rel="search" type="application/opensearchdescription+xml" href="#" title="Issue" />
+  <style>
+    :root {
+      --aui-bg: #f4f5f7;
+      --aui-surface: #ffffff;
+      --aui-text: #172b4d;
+      --aui-muted: #42526e;
+      --aui-border: #dfe1e6;
+      --aui-blue: #0052cc;
+      --aui-topbar: #13181f;
+      --aui-new-bg: #eae6ff;
+      --aui-new-text: #403294;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: var(--aui-bg); color: var(--aui-text); font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Helvetica,Arial,sans-serif; }
+    a { color: var(--aui-blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Global header (AUI-like) */
+    .aui-header { background: var(--aui-topbar); color: #fff; }
+    .aui-header .aui-header-inner { max-width: 1200px; margin: 0 auto; height: 56px; display: flex; align-items: center; padding: 0 16px; }
+    .aui-header-logo-custom img { height: 24px; vertical-align: middle; }
+    .aui-header .aui-nav { list-style: none; display: flex; gap: 16px; margin: 0 0 0 16px; padding: 0; }
+    .aui-header .aui-nav a { color: #fff; font-weight: 600; }
+
+    /* Page shell */
+    #page { max-width: 1200px; margin: 16px auto; padding: 0 16px; }
+
+    /* Issue header */
+    .aui-page-header { background: var(--aui-surface); border: 1px solid var(--aui-border); border-radius: 8px; padding: 16px; display: grid; grid-template-columns: auto 1fr auto; gap: 16px; align-items: center; }
+    .aui-page-header-image img { width: 48px; height: 48px; border-radius: 8px; display: block; }
+    .aui-page-header-main h2 { margin: 4px 0 0; font-size: 20px; font-weight: 700; }
+    .breadcrumbs { display: flex; gap: 8px; align-items: center; margin: 0; color: var(--aui-muted); font-size: 14px; }
+    .status-lozenge { display: inline-block; margin-left: 8px; padding: 2px 8px; border-radius: 3px; font-size: 12px; font-weight: 700; background: var(--aui-new-bg); color: var(--aui-new-text); border: 1px solid #d9c8ff; vertical-align: middle; }
+
+    /* Layout */
+    .layout { display: grid; grid-template-columns: 1fr 320px; gap: 16px; margin-top: 16px; }
+
+    /* Modules */
+    .module { background: var(--aui-surface); border: 1px solid var(--aui-border); border-radius: 8px; overflow: hidden; }
+    .mod-header { padding: 12px 16px; border-bottom: 1px solid var(--aui-border); background: #fafbfc; }
+    .mod-header h3 { margin: 0; font-size: 14px; color: var(--aui-muted); letter-spacing: .2px; }
+    .mod-content { padding: 16px; }
+
+    /* Property list */
+    .property-list { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 12px 16px; font-size: 14px; }
+    .property-list .item .name { display: block; color: var(--aui-muted); margin-bottom: 4px; }
+    .property-list .item .value { font-weight: 600; }
+    .property-list .item.full-width { grid-column: 1 / -1; }
+
+    /* Description content */
+    .user-content-block h1 { font-size: 18px; margin: 16px 0 8px; }
+    .user-content-block p { margin: 8px 0; line-height: 1.6; }
+    .user-content-block ul { margin: 8px 0 8px 20px; }
+
+    /* Code blocks */
+    pre { background: #f7f8fa; border: 1px solid var(--aui-border); border-radius: 6px; padding: 12px; overflow: auto; }
+    code, pre { font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace; font-size: 12px; }
+
+    /* Right column lists */
+    .item-details dl { margin: 0 0 12px; display: grid; grid-template-columns: 120px 1fr; gap: 8px 16px; align-items: center; }
+    .item-details dt { color: var(--aui-muted); }
+    .item-details dd { margin: 0; font-weight: 600; }
+
+    footer { margin: 24px 0; color: var(--aui-muted); font-size: 12px; text-align: center; }
+    .aui-skip-link { position: absolute; left: -9999px; }
+    @media print { .aui-header { display: none; } #page { margin: 0; } }
+  </style>
+</head>
+<body id="jira" class="aui-layout aui-theme-default">
+  <a class="aui-skip-link" href="#main">Skip to main content</a>
+  <div id="page">
+    <header id="header" role="banner">
+      <nav class="aui-header" aria-label="Site">
+        <div class="aui-header-inner">
+          <span id="logo" class="aui-header-logo aui-header-logo-custom">
+            <a href="#" aria-label="Go to home page">
+              <img alt="ATC Jira" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='24' viewBox='0 0 120 24'%3E%3Crect width='120' height='24' rx='4' fill='%23ffffff22'/%3E%3Ctext x='10' y='16' fill='%23ffffff' font-family='Arial' font-size='12' font-weight='700'%3EATC Jira%3C/text%3E%3C/svg%3E" />
+            </a>
+          </span>
+          <ul class="aui-nav">
+            <li><a href="#">Dashboards</a></li>
+            <li><a href="#">Projects</a></li>
+            <li><a href="#">Issues</a></li>
+            <li><a href="#">Boards</a></li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+
+    <main id="main" class="content" role="main">
+      <div class="issue-view">
+        <div class="aui-page-header">
+          <div class="aui-page-header-image">
+            <img alt="Project avatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Crect width='48' height='48' rx='8' fill='%230052cc'/%3E%3Ctext x='24' y='30' text-anchor='middle' fill='white' font-family='Arial' font-size='16' font-weight='700'%3EPT%3C/text%3E%3C/svg%3E" />
+          </div>
+          <div class="aui-page-header-main">
+            <ol class="breadcrumbs aui-nav-breadcrumbs">
+              <li><a id="project-name-val" href="#">PRAXISTAG</a></li>
+              <li><a class="issue-link" id="key-val" href="#">PT-101</a></li>
+            </ol>
+            <h2 id="summary-val">Implement URL Shortener Backend <span class="status-lozenge">To Do</span></h2>
+          </div>
+          <div class="aui-page-header-actions"></div>
+        </div>
+
+        <div class="layout">
+          <!-- Main column -->
+          <div class="issue-main-column">
+            <!-- Details module -->
+            <div id="details-module" class="module toggle-wrap">
+              <div id="details-module_heading" class="mod-header">
+                <h3 class="toggle-header" id="details-module-label">Details</h3>
+              </div>
+              <div class="mod-content">
+                <ul id="issuedetails" class="property-list two-cols">
+                  <li class="item"><div class="wrap"><strong class="name">Type:</strong><span class="value">Task</span></div></li>
+                  <li class="item item-right"><div class="wrap"><strong class="name">Resolution:</strong><span class="value">Unresolved</span></div></li>
+                  <li class="item"><div class="wrap"><strong class="name">Priority:</strong><span class="value">Medium</span></div></li>
+                  <li class="item item-right"><div class="wrap"><strong class="name">Fix Version/s:</strong><span class="value">None</span></div></li>
+                  <li class="item full-width"><div class="wrap"><strong class="name">Labels:</strong><span class="value">praxistag, backend, fastapi</span></div></li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Description module -->
+            <div id="descriptionmodule" class="module toggle-wrap">
+              <div id="descriptionmodule_heading" class="mod-header">
+                <h3 class="toggle-header" id="descriptionmodule-label">Description</h3>
+              </div>
+              <div class="mod-content">
+                <div id="description-val" class="field-ignore-highlight">
+                  <div class="user-content-block">
+                    <h1>Task</h1>
+                    <p>Build the core functionality for a simple URL shortener service in FastAPI. Implement the missing parts in <code>src/backend/main.py</code>.</p>
+
+                    <h1>Motivation</h1>
+                    <p>Students learn to build REST endpoints, manage in-memory data structures, and handle basic analytics and image generation.</p>
+
+                    <h1>Requirements</h1>
+                    <ul>
+                      <li>Implement in-memory storage: map <code>short_code</code> to original URL using <code>url_store</code> and record creation times in <code>url_creation_times</code>.</li>
+                      <li>POST <code>/shorten</code>:
+                        <ul>
+                          <li>Accept body <code>{"url": "https://example.com/path"}</code>.</li>
+                          <li>Generate unique code via <code>generate_short_code()</code> (regenerate on collision).</li>
+                          <li>Persist mapping and return JSON exactly like <code>{"short_code": "AbC123"}</code>.</li>
+                        </ul>
+                      </li>
+                      <li>GET <code>/get-long-url/{short_code}</code>:
+                        <ul>
+                          <li>Return <code>404</code> if unknown; otherwise return <code>{"long_url": "..."}</code>.</li>
+                          <li>Update <code>click_stats</code> (increment <code>count</code>, append <code>datetime.now()</code> to <code>timestamps</code> and set <code>original_url</code>).</li>
+                        </ul>
+                      </li>
+                      <li>GET <code>/get-qr-code/{url}</code>:
+                        <ul>
+                          <li>Decode the path param using <code>urllib.parse.unquote</code>.</li>
+                          <li>Create a PNG QR using <code>qrcode</code> and <code>io.BytesIO</code>, then return <code>{"image_base64": "data:image/png;base64,&lt;...&gt;"}</code>.</li>
+                        </ul>
+                      </li>
+                      <li>Keep stats endpoints working: <code>GET /stats</code> and <code>GET /stats/{short_code}</code>.</li>
+                    </ul>
+
+                    <h1>Step-by-step Guide</h1>
+                    <ol>
+                      <li>Open <code>src/backend/main.py</code> and review the provided globals: <code>url_store</code>, <code>click_stats</code>, <code>url_creation_times</code>, and the Pydantic models.</li>
+                      <li>Implement <strong><code>/shorten</code></strong>:
+                        <ul>
+                          <li>Generate a code with <code>generate_short_code()</code> and ensure it does not exist yet in <code>url_store</code>.</li>
+                          <li>Save the mapping and set <code>url_creation_times[short_code] = datetime.now()</code>.</li>
+                          <li>Return <code>{"short_code": short_code}</code>.</li>
+                        </ul>
+                      </li>
+                      <li>Implement <strong><code>/get-long-url/{short_code}</code></strong>:
+                        <ul>
+                          <li>If <code>short_code</code> missing, raise <code>HTTPException(status_code=404)</code>.</li>
+                          <li>Read original URL from <code>url_store</code> and return it as <code>{"long_url": original_url}</code>.</li>
+                          <li>Update <code>click_stats</code> for the code: create an entry if none exists, increment <code>count</code>, append <code>datetime.now()</code>.</li>
+                        </ul>
+                      </li>
+                      <li>Implement <strong><code>/get-qr-code/{url}</code></strong> (optional but recommended):
+                        <ul>
+                          <li>Decode <code>url</code>, generate the QR image in memory, base64‑encode, and return a data URL string.</li>
+                        </ul>
+                      </li>
+                      <li>Verify <strong>stats</strong> endpoints still behave as expected (no new timestamps created implicitly).</li>
+                    </ol>
+
+                    <h1>Common Pitfalls</h1>
+                    <ul>
+                      <li>Not handling collisions for generated codes. Regenerate until you get a fresh one.</li>
+                      <li>Forgetting to set <code>url_creation_times</code> when creating a new short code.</li>
+                      <li>Not decoding the URL param for the QR endpoint; use <code>unquote</code>.</li>
+                    </ul>
+
+                    <h1>Acceptance Criteria</h1>
+                    <ul>
+                      <li><code>/shorten</code> returns JSON with key <code>short_code</code> and persists data.</li>
+                      <li><code>/get-long-url/{short_code}</code> returns <code>200</code> + <code>long_url</code> if found, otherwise <code>404</code>.</li>
+                      <li>QR endpoint returns a valid PNG data URL string.</li>
+                    </ul>
+
+                    <h1>Example Usage</h1>
+                    <pre># Create a short URL
+curl -s -X POST http://localhost:8000/shorten \
+  -H 'Content-Type: application/json' \
+  -d '{"url":"https://example.com/my/long/path"}'
+
+# Resolve
+curl -s http://localhost:8000/get-long-url/AbC123
+
+# Generate QR
+curl -s http://localhost:8000/get-qr-code/https%3A%2F%2Fexample.com%2Fmy%2Flong%2Fpath
+
+# Stats
+curl -s http://localhost:8000/stats | jq .
+curl -s http://localhost:8000/stats/AbC123 | jq .
+</pre>
+
+                    <h1>How to Test Quickly</h1>
+                    <ul>
+                      <li>Start backend locally: <code>task run-backend-dev</code></li>
+                      <li>Use predefined requests:
+                        <ul>
+                          <li><code>task execute-shorten-local</code></li>
+                          <li><code>task execute-get-long-url-local</code></li>
+                          <li><code>task execute-get-qr-code</code> (optional)</li>
+                        </ul>
+                      </li>
+                    </ul>
+
+                    <h1>Contacts / Links</h1>
+                    <ul>
+                      <li>Instructor: Fabian Sieper (ext.)</li>
+                      <li>Repo files: <code>src/backend/main.py</code>, <code>jira_task.html</code></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sidebar -->
+          <div class="issue-side-column">
+            <div id="peoplemodule" class="module toggle-wrap">
+              <div id="peoplemodule_heading" class="mod-header"><h3 class="toggle-header" id="peoplemodule-label">People</h3></div>
+              <div class="mod-content">
+                <div class="item-details people-details" id="peopledetails">
+                  <dl>
+                    <dt>Assignee</dt><dd>Unassigned</dd>
+                  </dl>
+                  <dl>
+                    <dt>Reporter</dt><dd>Instructor</dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+
+            <div id="datesmodule" class="module toggle-wrap">
+              <div id="datesmodule_heading" class="mod-header"><h3 class="toggle-header" id="datesmodule-label">Dates</h3></div>
+              <div class="mod-content">
+                <div class="item-details">
+                  <dl><dt>Created:</dt><dd><time>Today</time></dd></dl>
+                  <dl><dt>Updated:</dt><dd><time>Today</time></dd></dl>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" role="contentinfo">
+      <section class="footer-body">
+        <p class="atlassian-footer">Atlassian Jira Project Management Software (mock)</p>
+      </section>
+    </footer>
+  </div>
+</body>
+</html>

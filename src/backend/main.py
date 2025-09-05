@@ -25,9 +25,6 @@ class ClickStatsData(BaseModel):
 # Initialize with proper type annotation
 click_stats: Dict[str, ClickStatsData] = {}
 
-# Store creation times separately to avoid timestamp issues
-url_creation_times: Dict[str, datetime] = {}
-
 class UrlRequest(BaseModel):
   url: str
 
@@ -35,7 +32,6 @@ class ClickStats(BaseModel):
   short_code: str
   original_url: str
   click_count: int
-  created_at: str
 
 def generate_short_code(length: int = 6) -> str:
   return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
@@ -51,10 +47,6 @@ def shorten_url(request: UrlRequest):
     short_code = generate_short_code()
 
   url_store[short_code] = request.url
-  
-  # Store creation time
-  creation_time = datetime.now()
-  url_creation_times[short_code] = creation_time
   
   # Initialize click stats for the new URL
   click_stats[short_code] = ClickStatsData(
@@ -110,19 +102,11 @@ def get_all_stats():
   """Get click statistics for all shortened URLs."""
   stats = []
   for short_code, data in click_stats.items():
-    # Use stored creation time or first click time, never generate new timestamps
-    created_at = url_creation_times.get(short_code)
-    if not created_at and data.timestamps:
-      created_at = data.timestamps[0]
-    elif not created_at:
-      # Fallback - this shouldn't happen in normal operation
-      created_at = datetime.now()
     
     stats.append(ClickStats(
       short_code=short_code,
       original_url=data.original_url,
-      click_count=data.count,
-      created_at=created_at.isoformat()
+      click_count=data.count
     ))
   return stats
 
