@@ -38,9 +38,15 @@ http://base-url/appendix
 
 Store the appendix key on the backend. This key serves as a shorthand for a full URL. When a user enters `http://base-url/appendix` in their browser, they will be redirected to the associated full URL. For example, the full URL might be “www.youtube.com”.
 
-#### Primary Task
+#### Task Overview
 
-The backend of the application is not complete yet. The required endpoints which are called by the frontend are not implemented (take a look at file `src/backend/main.py`).
+**📁 All detailed task descriptions can be found in the `/tasks` folder.**
+
+#### Task 1: Primary Implementation (Required)
+
+**Complete this first!** The backend of the application is not complete yet. The required endpoints which are called by the frontend are not implemented (take a look at file `src/backend/main.py`).
+
+👉 **See detailed instructions:** [`tasks/TASK-001-basic-implementation.md`](tasks/TASK-001-basic-implementation.md)
 
 The following two Python-endpoints (in file `src/backend/main.py`) have to be implemented for this task:
 
@@ -48,6 +54,14 @@ The following two Python-endpoints (in file `src/backend/main.py`) have to be im
 - `get_long_url`
   
 You can test the functionality of those endpoints locally by utilizing the Taskfile task `execute-shorten-local` to shorten an URL and task `execute-get-long-url-local` to retrieve the original long version of a short URL.
+
+#### Task 2: Advanced Feature (Optional)
+
+**For students who finish early:** Once you complete Task 1, you can work on an advanced feature that prevents infinite redirect loops.
+
+👉 **See detailed instructions:** [`tasks/US-002-prevent-url-loops.md`](tasks/US-002-prevent-url-loops.md)
+
+This task involves both backend validation and frontend error handling to improve the user experience and system security.
 
 Also, there already are working test-endpoints within `main.py` with corresponding test-tasks (enter `task` in the terminal to list all tasks) which you can use to get a better understanding of how the unimplemented endpoints could be implemented.
 
