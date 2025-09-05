@@ -10,7 +10,13 @@
     "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
   ],
   "settings": {
-    "terminal.integrated.shell.linux": "/bin/bash"
+    "terminal.integrated.shell.linux": "/bin/bash",
+    // Disable GitHub Copilot in this workspace (all languages)
+    "github.copilot.enable": { "*": false },
+    // Disable inline suggestions globally (covers Copilot and others)
+    "editor.inlineSuggest.enabled": false,
+    // Disable Copilot Chat (key name tolerated even if extension absent)
+    "github.copilot.chat.enable": false
   },
   "extensions": [
     "ms-vscode.node-debug2",
