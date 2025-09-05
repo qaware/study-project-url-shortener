@@ -3,7 +3,6 @@ import io
 import os
 import random
 import string
-from datetime import datetime
 from typing import Dict, List
 from urllib.parse import unquote
 
@@ -11,19 +10,10 @@ import qrcode
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
-app = FastAPI()
 
-# In-memory store for shortened URLs
-url_store: Dict[str, str] = {}
-
-# Click tracking storage with proper typing
 class ClickStatsData(BaseModel):
     count: int
-    timestamps: List[datetime]
     original_url: str
-
-# Initialize with proper type annotation
-click_stats: Dict[str, ClickStatsData] = {}
 
 class UrlRequest(BaseModel):
   url: str
@@ -32,6 +22,14 @@ class ClickStats(BaseModel):
   short_code: str
   original_url: str
   click_count: int
+
+app = FastAPI()
+
+# In-memory store for shortened URLs
+url_store: Dict[str, str] = {}
+
+# Holds information about clicks for each short URL
+click_stats: Dict[str, ClickStatsData] = {}
 
 def generate_short_code(length: int = 6) -> str:
   return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
@@ -51,7 +49,6 @@ def shorten_url(request: UrlRequest):
   # Initialize click stats for the new URL
   click_stats[short_code] = ClickStatsData(
     count=0,
-    timestamps=[],
     original_url=request.url
   )
   
@@ -64,13 +61,10 @@ def get_long_url(short_code: str):
     if short_code not in click_stats:
       click_stats[short_code] = ClickStatsData(
         count=0,
-        timestamps=[],
         original_url=url_store[short_code]
       )
     
     click_stats[short_code].count += 1
-    click_stats[short_code].timestamps.append(datetime.now())
-    
     return {url_store[short_code]}
 
   raise HTTPException(status_code=404, detail="Short URL not found")
@@ -79,7 +73,7 @@ def get_long_url(short_code: str):
 @app.get("/get-qr-code/{url}")
 def get_qr_code(url: str):
   # URL decode the parameter to handle special characters
-  decoded_url = unquote(url)
+  decoded_url = url
   
   qr = qrcode.QRCode(
     version=1,
@@ -121,18 +115,14 @@ def get_stats_for_url(short_code: str):
       "short_code": short_code,
       "original_url": url_store[short_code],
       "click_count": 0,
-      "recent_clicks": []
     }
   
   data = click_stats[short_code]
-  # Return last 10 clicks for the diagram
-  recent_clicks = [ts.isoformat() for ts in data.timestamps[-10:]]
   
   return {
     "short_code": short_code,
     "original_url": data.original_url,
     "click_count": data.count,
-    "recent_clicks": recent_clicks
   }
 
 # Returns simple string message
