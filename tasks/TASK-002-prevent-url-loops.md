@@ -1,4 +1,3 @@
-# TODO: this feature is to be implemented on "solution"
 # US-002: URL Self-Reference Loop Prevention
 
 **As a** user of the URL shortener  
@@ -97,48 +96,6 @@ This validation is a common feature in professional URL shorteners like bit.ly a
 
 ## Technical Implementation Guide
 
-### Backend Changes (main.py)
-
-```python
-from urllib.parse import urlparse
-
-def is_self_referencing(url: str) -> bool:
-    """Check if URL points to this service"""
-    try:
-        parsed = urlparse(url)
-        # Add protocol if missing
-        if not parsed.scheme:
-            url = "http://" + url
-            parsed = urlparse(url)
-        
-        # Check against known service domains
-        service_domains = ["localhost", "localhost:80", "localhost:8080"]
-        return parsed.netloc.lower() in service_domains
-    except:
-        return False
-
-@app.post("/shorten")
-def shorten_url(request: UrlRequest):
-    if is_self_referencing(request.url):
-        raise HTTPException(
-            status_code=400, 
-            detail={
-                "error": "Self-reference not allowed",
-                "message": "Cannot shorten URLs that point to this service - this would create an infinite redirect loop. Please use an external URL instead."
-            }
-        )
-    # ... existing implementation
-```
-
-### Frontend Changes
-
-- Update HTTP error handling in the service
-- Create red error display component
-- Clear error state on input change
-- Hide success message during error state
-
----
-
 ## Test Cases
 
 ### ✅ Self-Referencing URLs (Should Fail)
@@ -163,16 +120,3 @@ def shorten_url(request: UrlRequest):
 - [ ] Backend validation implemented and tested
 - [ ] Frontend error handling working
 - [ ] Manual testing with various URL patterns
-- [ ] Code review completed
-- [ ] No regression in existing functionality
-
----
-
-**Related Issues:** None  
-**Blocked By:** None  
-**Blocks:** None
-
----
-
-*Last Updated: 2025-09-05*  
-*Created By: Teaching Assistant*

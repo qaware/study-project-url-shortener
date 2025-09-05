@@ -4,7 +4,7 @@ import os
 import random
 import string
 from typing import Dict, List
-from urllib.parse import unquote
+from urllib.parse import unquote, urlparse
 
 import qrcode
 from fastapi import FastAPI, HTTPException
@@ -34,8 +34,36 @@ click_stats: Dict[str, ClickStatsData] = {}
 def generate_short_code(length: int = 6) -> str:
   return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
 
+def is_self_referencing(url: str) -> bool:
+  """Check if URL points to this URL shortener service to prevent infinite loops."""
+  try:
+    # Add protocol if missing
+    if not url.startswith(('http://', 'https://')):
+      url = 'http://' + url
+    
+    parsed = urlparse(url)
+    
+    # Known service domains (localhost with common ports)
+    service_domains = {
+      'localhost',
+      'localhost:80', 
+      'localhost:8000',
+      'localhost:8080'
+    }
+    
+    return parsed.netloc.lower() in service_domains
+  except Exception:
+    # If URL parsing fails, allow it (conservative approach)
+    return False
+
 @app.post("/shorten")
 def shorten_url(request: UrlRequest):
+  # Check for self-referencing URLs to prevent infinite redirect loops
+  if is_self_referencing(request.url):
+    raise HTTPException(
+      status_code=400, 
+      detail="Cannot shorten URLs that point to this service - this would create an infinite redirect loop. Please use an external URL instead."
+    )
 
   if request.url in url_store.values():
     raise HTTPException(status_code=400, detail="URL was already shortened previously")
