@@ -34,12 +34,3 @@ tasks:
     deps:
       - run-backend-dev
       - run-frontend-dev
-
-  open-task:
-    desc: Open the Jira-style task page in your default browser
-    cmds:
-      - >
-        (command -v open >/dev/null 2>&1 && open jira_task.html)
-        || (command -v xdg-open >/dev/null 2>&1 && xdg-open jira_task.html)
-        || (command -v powershell.exe >/dev/null 2>&1 && powershell.exe -NoProfile -Command Start-Process "$(pwd)/jira_task.html")
-        || echo "Please open ./jira_task.html manually in your browser."
