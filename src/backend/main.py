@@ -7,7 +7,7 @@ from typing import Dict, List
 from urllib.parse import urlparse
 
 import qrcode
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 
 
@@ -34,31 +34,42 @@ click_stats: Dict[str, ClickStatsData] = {}
 def generate_short_code(length: int = 6) -> str:
   return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
 
-def is_self_referencing(url: str) -> bool:
-  """Check if URL points to this URL shortener service to prevent infinite loops."""
+def is_self_referencing(url: str, service_host: str | None) -> bool:
+  """Check if URL points to this URL shortener service to prevent infinite loops.
+
+  Compares the target URL's hostname to the current request's hostname and
+  ignores ports entirely. This works for dynamic domains (e.g., GitHub Codespaces)
+  without hardcoding domains and treats different ports on the same domain as self-references.
+  """
   try:
-    # Add protocol if missing
-    if not url.startswith(('http://', 'https://')):
-      url = 'http://' + url
-    
+    # Add protocol if missing so urlparse can extract netloc/port
+    if not url.startswith(("http://", "https://")):
+      url = "http://" + url
+
     parsed = urlparse(url)
-    
-    # Known service domains (localhost with common ports)
-    service_domains = {
-      'localhost',
-      'localhost:8000',
-      'localhost:8080'
-    }
-    
-    return parsed.netloc.lower() in service_domains
+
+    # Extract target hostname (lower-cased)
+    target_host = (parsed.hostname or "").lower()
+
+    # Determine service hostname from request context
+    service_hostname = (service_host or "").lower()
+
+    # Block when hostnames match (port is irrelevant)
+    if target_host == service_hostname:
+      return True
+
+    # Backward-compatible safety: also block common localhost hosts
+    common_localhosts = {"localhost", "127.0.0.1"}
+    return target_host in common_localhosts and service_hostname in common_localhosts
   except Exception:
     # If URL parsing fails, allow it (conservative approach)
     return False
 
 @app.post("/shorten")
-def shorten_url(request: UrlRequest):
+def shorten_url(request: UrlRequest, http_request: Request):
   # Check for self-referencing URLs to prevent infinite redirect loops
-  if is_self_referencing(request.url):
+  current_host = http_request.url.hostname
+  if is_self_referencing(request.url, current_host):
     raise HTTPException(
       status_code=400, 
       detail="Cannot shorten URLs that point to this service - this would create an infinite redirect loop. Please use an external URL instead."

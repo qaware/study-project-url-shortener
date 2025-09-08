@@ -26,6 +26,7 @@ This validation is a common feature in professional URL shorteners like bit.ly a
 - Detect when a URL being shortened points to the same URL shortener service
 - Return appropriate error response instead of creating the shortened URL
 - Support both `localhost` and production domain detection
+- Compare only the domain (hostname); ports are irrelevant
 - Maintain existing functionality for valid URLs
 
 ### Technical Requirements
@@ -65,8 +66,8 @@ This validation is a common feature in professional URL shorteners like bit.ly a
 
 ### ✅ Backend Validation
 
-- [ ] Extract domain from incoming URL using `urllib.parse`
-- [ ] Compare against current service domains (`localhost`, `localhost:8080`)
+- [ ] Extract domain (hostname) from incoming URL using `urllib.parse`
+- [ ] Compare against current request's hostname (ignore port)
 - [ ] Return HTTP 400 with error message: `"Cannot shorten URLs that point to this service - this would create an infinite redirect loop"`
 - [ ] Handle URLs with/without protocols (`http://`, `https://`)
 - [ ] Case-insensitive domain matching (localhost == LOCALHOST)
@@ -88,8 +89,6 @@ This validation is a common feature in professional URL shorteners like bit.ly a
 ### ✅ Valid URL Handling
 
 - [ ] External URLs (google.com, youtube.com, etc.) work normally
-- [ ] IP addresses work normally (192.168.1.1, 8.8.8.8)
-- [ ] Different ports work normally (localhost:3000, localhost:9000)
 - [ ] HTTPS external URLs work normally
 
 ---
@@ -101,7 +100,7 @@ This validation is a common feature in professional URL shorteners like bit.ly a
 ### ✅ Self-Referencing URLs (Should Fail)
 
 - [ ] `http://localhost:8080/abc123`
-- [ ] `https://localhost:8080/xyz789`
+- [ ] `https://localhost:3000/xyz789` (same domain, different port still fails)
 - [ ] `localhost/test`
 - [ ] `LOCALHOST:8080/TEST` (case insensitive)
 
@@ -109,8 +108,7 @@ This validation is a common feature in professional URL shorteners like bit.ly a
 
 - [ ] `https://www.google.com`
 - [ ] `https://youtube.com/watch?v=123`
-- [ ] `http://192.168.1.1:3000`
-- [ ] `https://localhost:3000` (different port)
+- [ ] `http://192.168.1.1:3000` (assuming service host is not `192.168.1.1`)
 
 ---
 
