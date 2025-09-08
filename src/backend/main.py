@@ -46,7 +46,6 @@ def is_self_referencing(url: str) -> bool:
     # Known service domains (localhost with common ports)
     service_domains = {
       'localhost',
-      'localhost:80', 
       'localhost:8000',
       'localhost:8080'
     }

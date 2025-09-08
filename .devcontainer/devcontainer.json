@@ -1,6 +1,6 @@
 {
   "name": "Node 22 & Python 3.13 DevContainer",
-  "forwardPorts": [80],
+  "forwardPorts": [8080],
   "build": {
     "dockerfile": "Dockerfile",
     "context": "."
@@ -12,7 +12,7 @@
   "customizations": {
     "vscode": {
       "settings": {
-        "terminal.integrated.shell.linux": "/bin/bash",
+        "terminal.integrated.shell.linux": "/bin/bash"
       },
       "extensions": [
         "ms-vscode.node-debug2",

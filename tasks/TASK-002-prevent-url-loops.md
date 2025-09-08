@@ -10,7 +10,7 @@
 
 Currently, the URL shortener doesn't validate whether the URL being shortened points back to the same service. This can create dangerous infinite redirect loops:
 
-1. **Infinite Redirects**: User shortens `http://localhost:80/abc123` → creates `http://localhost:80/xyz789` → endless loop
+1. **Infinite Redirects**: User shortens `http://localhost:8080/abc123` → creates `http://localhost:8080/xyz789` → endless loop
 2. **Browser Crashes**: Modern browsers will eventually stop following redirects, but this creates poor user experience
 3. **Server Load**: Infinite loops can cause unnecessary server load and resource consumption
 4. **Security Risk**: Could be exploited for denial-of-service attacks
@@ -66,7 +66,7 @@ This validation is a common feature in professional URL shorteners like bit.ly a
 ### ✅ Backend Validation
 
 - [ ] Extract domain from incoming URL using `urllib.parse`
-- [ ] Compare against current service domains (`localhost`, `localhost:80`, `localhost:8080`)
+- [ ] Compare against current service domains (`localhost`, `localhost:8080`)
 - [ ] Return HTTP 400 with error message: `"Cannot shorten URLs that point to this service - this would create an infinite redirect loop"`
 - [ ] Handle URLs with/without protocols (`http://`, `https://`)
 - [ ] Case-insensitive domain matching (localhost == LOCALHOST)
@@ -100,10 +100,10 @@ This validation is a common feature in professional URL shorteners like bit.ly a
 
 ### ✅ Self-Referencing URLs (Should Fail)
 
-- [ ] `http://localhost:80/abc123`
-- [ ] `https://localhost:80/xyz789`
+- [ ] `http://localhost:8080/abc123`
+- [ ] `https://localhost:8080/xyz789`
 - [ ] `localhost/test`
-- [ ] `LOCALHOST:80/TEST` (case insensitive)
+- [ ] `LOCALHOST:8080/TEST` (case insensitive)
 
 ### ✅ Valid URLs (Should Work)
 
