@@ -7,27 +7,33 @@ includes:
 
 tasks:
   run:
+    desc: Stop, build and run the url shortener container
     deps:
       - stop
       - build
     cmds:
       - docker run -d -p 8080:8080 -p 8000:8000 --name url-shortener url-shortener     
-    desc: Stop, build and run the url shortener container
 
+  stop:
+    desc: Stop and remove the url shortener container if it exists
+    cmds:
+      - docker stop url-shortener || true
+      - docker rm url-shortener || true
+    
   build:
+    desc: Build the applications Docker image
     cmds:
       - docker build -t url-shortener .
-    desc: Build the applications Docker image
 
   run-backend-dev:
+    desc: Run the backend container for testing
     cmds:
       - cd src/backend && python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt && uvicorn main:app --reload --port 8000
-    desc: Run the backend container for testing
 
   run-frontend-dev:
+    desc: Run the frontend container for testing
     cmds:
       - cd src/frontend && npm install && npm run start
-    desc: Run the frontend container for testing
 
   run-dev:
     desc: Run frontend and backend together; stop both on Ctrl+C
