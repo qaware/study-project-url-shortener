@@ -3,7 +3,7 @@ import io
 import os
 import random
 import string
-from typing import Dict, List
+from typing import Dict, List, Optional
 from urllib.parse import urlparse
 
 import qrcode
@@ -34,7 +34,7 @@ click_stats: Dict[str, ClickStatsData] = {}
 def generate_short_code(length: int = 6) -> str:
   return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
 
-def is_self_referencing(url: str, service_host: str | None) -> bool:
+def is_self_referencing(url: str, service_host: Optional[str]) -> bool:
   """Check if URL points to this URL shortener service to prevent infinite loops.
 
   Compares the target URL's hostname to the current request's hostname and
