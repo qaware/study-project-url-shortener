@@ -145,11 +145,9 @@ Both the frontend and backend have to be running if you want to test your applic
 
 - `task run-frontend-dev` to start the frontend
 - `task run-backend-dev` to start the backend
+- `task run-dev` to start frontend & backend
 
-Execute the commands in separate terminals since the daemons are not attached by default.
-(Opening a new terminal in VS Code or Github Codespaces is possible by pressing `Cmd + Shift + P` and then selecting "Terminal: Create new Terminal")
-
-After the application is running, the UI can be viewed via the browser by visiting `http://localhost:80` and the backend can be reached via `http://localhost:8000`.
+After the application is running, the UI can be viewed via the browser by visiting `http://localhost:8080` and the backend can be reached via `http://localhost:8000`.
   
 #### Production
 
