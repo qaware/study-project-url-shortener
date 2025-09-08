@@ -124,48 +124,6 @@ You need to complete **2 required endpoints** and **1 optional endpoint** in `sr
 
 ---
 
-## Implementation Hints
-
-### For `shorten_url`:
-
-```python
-@app.post("/shorten")
-def shorten_url(request: UrlRequest):
-    # 1. Generate short code
-    short_code = generate_short_code()
-    
-    # 2. Store in url_store
-    url_store[short_code] = request.url
-    
-    # 3. Initialize click stats
-    click_stats[short_code] = ClickStatsData(count=0, original_url=request.url)
-    
-    # 4. Return short code
-    return {"short_code": short_code}
-```
-
-### For `get_long_url`:
-
-```python
-@app.get("/get-long-url/{short_code}")
-def get_long_url(short_code: str):
-    # 1. Check if short_code exists
-    if short_code not in url_store:
-        raise HTTPException(status_code=404, detail="Short URL not found")
-    
-    # 2. Get original URL
-    original_url = url_store[short_code]
-    
-    # 3. Update click stats
-    if short_code in click_stats:
-        click_stats[short_code].count += 1
-    
-    # 4. Return original URL
-    return {"original_url": original_url}
-```
-
----
-
 ## Testing Your Implementation
 
 ### Using Taskfile Commands:
