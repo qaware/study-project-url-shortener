@@ -19,16 +19,18 @@ export class UrlShortenerService {
    */
   public async shortenUrl(url: string): Promise<string> {
     const apiUrl = `${this.backendBasePath}/shorten`;
+    const service_host = window.location.hostname;
 
     // Log the outgoing request with payload details.
     this.logger.info(`Sending POST request to ${apiUrl} with payload:`, {
       url,
+      service_host,
     });
 
     try {
       // Await the response from the HTTP POST request.
       const response = await firstValueFrom(
-        this.http.post<string>(apiUrl, { url })
+        this.http.post<string>(apiUrl, { url, service_host })
       );
 
       // Log successful request completion.

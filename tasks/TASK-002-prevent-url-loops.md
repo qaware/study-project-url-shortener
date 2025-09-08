@@ -1,4 +1,4 @@
-# US-002: URL Self-Reference Loop Prevention
+# US-002: Prevent Self-Referencing URL Loops
 
 **As a** user of the URL shortener  
 **I want** the system to prevent me from creating infinite redirect loops  
@@ -8,7 +8,7 @@
 
 ## Context
 
-Currently, the URL shortener doesn't validate whether the URL being shortened points back to the same service. This can create dangerous infinite redirect loops:
+Currently, the URL shortener doesn't validate whether the URL being shortened points back to the same service domain. This can create infinite redirect loops:
 
 1. **Infinite Redirects**: User shortens `http://localhost:8080/abc123` → creates `http://localhost:8080/xyz789` → endless loop
 2. **Browser Crashes**: Modern browsers will eventually stop following redirects, but this creates poor user experience
@@ -23,18 +23,19 @@ This validation is a common feature in professional URL shorteners like bit.ly a
 
 ### Functional Requirements
 
-- Detect when a URL being shortened points to the same URL shortener service
+- Detect when a URL being shortened has the same hostname as the service
+- Treat ports as irrelevant (only hostname matters)
 - Return appropriate error response instead of creating the shortened URL
-- Support both `localhost` and production domain detection
-- Compare only the domain (hostname); ports are irrelevant
-- Maintain existing functionality for valid URLs
+- Maintain existing functionality for valid external URLs
 
 ### Technical Requirements
 
+- Frontend already sends the service hostname (`window.location.hostname`) with shorten requests
 - Backend validation in the `shorten_url` endpoint
-- Proper HTTP error codes (400 Bad Request)
+- Ignore port when evaluating the target (use hostname only)
+- Proper HTTP error code (400 Bad Request)
 - Frontend error handling and display
-- Case-insensitive domain matching
+- Case-insensitive hostname comparison
 
 ### User Experience Requirements
 
@@ -67,10 +68,11 @@ This validation is a common feature in professional URL shorteners like bit.ly a
 ### ✅ Backend Validation
 
 - [ ] Extract domain (hostname) from incoming URL using `urllib.parse`
-- [ ] Compare against current request's hostname (ignore port)
+- [ ] Evaluate hostname only; ignore port
+- [ ] Reject when target hostname equals provided service hostname
 - [ ] Return HTTP 400 with error message: `"Cannot shorten URLs that point to this service - this would create an infinite redirect loop"`
 - [ ] Handle URLs with/without protocols (`http://`, `https://`)
-- [ ] Case-insensitive domain matching (localhost == LOCALHOST)
+- [ ] Case-insensitive matching
 
 ### ✅ Error Response Format
 
@@ -99,16 +101,15 @@ This validation is a common feature in professional URL shorteners like bit.ly a
 
 ### ✅ Self-Referencing URLs (Should Fail)
 
-- [ ] `http://localhost:8080/abc123`
-- [ ] `https://localhost:3000/xyz789` (same domain, different port still fails)
-- [ ] `localhost/test`
-- [ ] `LOCALHOST:8080/TEST` (case insensitive)
+- [ ] `http://<service-hostname>:8080/abc123` (matching hostname different port)
+- [ ] `https://<service-hostname>/xyz789`
+- [ ] `<service-hostname>/path`
 
 ### ✅ Valid URLs (Should Work)
 
 - [ ] `https://www.google.com`
 - [ ] `https://youtube.com/watch?v=123`
-- [ ] `http://192.168.1.1:3000` (assuming service host is not `192.168.1.1`)
+- [ ] `http://some-other-host:3000`
 
 ---
 

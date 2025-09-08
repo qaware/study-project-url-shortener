@@ -17,6 +17,8 @@ class ClickStatsData(BaseModel):
 
 class UrlRequest(BaseModel):
   url: str
+  # Frontend-provided hostname of this service (no port)
+  service_host: str
 
 class ClickStats(BaseModel):
   short_code: str
@@ -35,11 +37,10 @@ def generate_short_code(length: int = 6) -> str:
   return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
 
 def is_self_referencing(url: str, service_host: Optional[str]) -> bool:
-  """Check if URL points to this URL shortener service to prevent infinite loops.
+  """Check if URL points to the same service hostname (ports ignored).
 
-  Compares the target URL's hostname to the current request's hostname and
-  ignores ports entirely. This works for dynamic domains (e.g., GitHub Codespaces)
-  without hardcoding domains and treats different ports on the same domain as self-references.
+  Compares the target URL's hostname with the provided `service_host`.
+  Hostname comparison is case-insensitive; port is ignored.
   """
   try:
     # Add protocol if missing so urlparse can extract netloc/port
@@ -51,16 +52,11 @@ def is_self_referencing(url: str, service_host: Optional[str]) -> bool:
     # Extract target hostname (lower-cased)
     target_host = (parsed.hostname or "").lower()
 
-    # Determine service hostname from request context
+    # Determine service hostname (lower-cased). Frontend should send hostname only.
     service_hostname = (service_host or "").lower()
 
     # Block when hostnames match (port is irrelevant)
-    if target_host == service_hostname:
-      return True
-
-    # Backward-compatible safety: also block common localhost hosts
-    common_localhosts = {"localhost", "127.0.0.1"}
-    return target_host in common_localhosts and service_hostname in common_localhosts
+    return target_host == service_hostname
   except Exception:
     # If URL parsing fails, allow it (conservative approach)
     return False
@@ -68,7 +64,8 @@ def is_self_referencing(url: str, service_host: Optional[str]) -> bool:
 @app.post("/shorten")
 def shorten_url(request: UrlRequest, http_request: Request):
   # Check for self-referencing URLs to prevent infinite redirect loops
-  current_host = http_request.url.hostname
+  # Prefer frontend-provided host; fallback to request host if needed
+  current_host = request.service_host or http_request.url.hostname
   if is_self_referencing(request.url, current_host):
     raise HTTPException(
       status_code=400, 
@@ -90,7 +87,7 @@ def shorten_url(request: UrlRequest, http_request: Request):
     original_url=request.url
   )
   
-  return {short_code}
+  return short_code
 
 @app.get("/get-long-url/{short_code}")
 def get_long_url(short_code: str):
@@ -103,7 +100,7 @@ def get_long_url(short_code: str):
       )
     
     click_stats[short_code].count += 1
-    return {url_store[short_code]}
+    return url_store[short_code]
 
   raise HTTPException(status_code=404, detail="Short URL not found")
 
