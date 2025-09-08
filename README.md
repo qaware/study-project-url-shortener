@@ -53,7 +53,7 @@ The following two Python-endpoints (in file `src/backend/main.py`) have to be im
 - `shorten_url`
 - `get_long_url`
   
-You can test the functionality of those endpoints locally by utilizing the Taskfile task `execute-shorten-local` to shorten an URL and task `execute-get-long-url-local` to retrieve the original long version of a short URL.
+You can test the functionality of those endpoints locally by utilizing the Taskfile task `test:execute-shorten-local` to shorten an URL and task `test:execute-get-long-url-local` to retrieve the original long version of a short URL.
 
 #### Task 2: Advanced Feature (Optional)
 

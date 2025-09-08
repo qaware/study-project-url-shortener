@@ -1,9 +1,8 @@
 version: "3"
 
 includes:
-  tests:
+  test:
     taskfile: ./Requests.yml
-    flatten: true
 
 tasks:
   run:
