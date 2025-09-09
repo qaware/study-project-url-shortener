@@ -54,12 +54,22 @@ export class RedirectContainer implements OnInit {
 
     } catch (error) {
       this.logger.error('Failed to fetch long URL:', error);
-      this.errorMessage.set(`Short URL not found or invalid long URL: ${longUrl}`);
+      this.extractAndSetErrorMessage(error);
       this.isRedirecting.set(false);
     }
   }
 
   private addHttps(url: string): string {
     return /^https?:\/\//.test(url) ? url : `https://${url}`;
+  }
+
+    private extractAndSetErrorMessage(error: unknown) {
+    if (error && typeof error === 'object' && 'error' in error) {
+      const httpError = error as { error?: { detail?: string } };
+      const detail = httpError.error?.detail || 'An unexpected error occurred';
+      this.errorMessage.set(detail);
+    } else {
+      this.errorMessage.set('An unexpected error occurred');
+    }
   }
 }
